@@ -199,6 +199,14 @@ Return value is an object of headers, where header keys are object keys. NB! Sev
 
 ## Tests
 
+Download `mimefuncs` source and install dependencies
+
+```bash
+git clone git@github.com:Kreata/mimefuncs.git
+cd mimefuncs
+volo install
+```
+
 Tests are handled by QUnit. Open [testrunner.html](tests/testrunner.html) to run the tests.
 
 ## License
