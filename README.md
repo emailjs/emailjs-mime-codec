@@ -12,7 +12,7 @@ All input can use any charset (in this case, the value must not be a string but 
 
 Install with [volo](http://volojs.org/):
 
-    volo add Kreata/mimefuncs
+    volo add Kreata/mimefuncs/v0.1.0
 
 ### AMD
 
@@ -197,4 +197,10 @@ Return value is an object of headers, where header keys are object keys. NB! Sev
 
   * **headers** Headers string
 
-  
+## Tests
+
+Tests are handled by QUnit. Open [testrunner.html](tests/testrunner.html) to run the tests.
+
+## License
+
+**MIT**
