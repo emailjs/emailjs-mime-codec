@@ -12,7 +12,7 @@ All input can use any charset (in this case, the value must not be a string but 
 
 Install with [volo](http://volojs.org/):
 
-    volo add Kreata/mimefuncs/v0.1.0
+    volo add Kreata/mimefuncs/v0.1.1
 
 ### AMD
 
@@ -196,6 +196,14 @@ Return value is an object of headers, where header keys are object keys. NB! Sev
     mimefuncs.headerLinesDecode(headers) -> Object
 
   * **headers** Headers string
+
+### fromArrayBuffer
+
+Converts an `ArrayBuffer` or `Uint8Array` value to "binary" string.
+
+    mimefuncs.fromArrayBuffer(arrayBuffer) -> String
+
+  * **arrayBuffer** an `ArrayBuffer` or `Uint8Array` value
 
 ## Tests
 

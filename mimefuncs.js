@@ -415,6 +415,42 @@
         },
 
         /**
+         * Converts an ArrayBuffer to "binary" string
+         *
+         * @param {ArrayBuffer} arrayBuffer Octet stream buffer
+         * @param {String} "binary" string
+         */
+        fromArrayBuffer: function(arrayBuffer){
+
+            var maxSliceLength = 128 * 1024,
+                startIndex = 0,
+                sliceLen = 0,
+                slice, str = "";
+
+            // If it is a typed array, take ArrayBuffer only
+            if(arrayBuffer.buffer){
+                arrayBuffer = arrayBuffer.buffer;
+            }
+
+            // Array has limited length, so we split the input into
+            // several slices if needed
+            while(startIndex < arrayBuffer.byteLength){
+                sliceLen = arrayBuffer.byteLength - startIndex;
+
+                if(sliceLen > maxSliceLength){
+                    sliceLen = maxSliceLength;
+                }
+
+                slice = arrayBuffer.slice(startIndex, startIndex + sliceLen);
+                str += String.fromCharCode.apply(String, new Uint8Array(slice));
+
+                startIndex += sliceLen;
+            }
+
+            return str;
+        },
+
+        /**
          * Splits a mime encoded string. Needed for dividing mime words into smaller chunks
          *
          * @param {String} str Mime encoded string to be split up

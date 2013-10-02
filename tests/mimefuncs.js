@@ -256,3 +256,17 @@ test("Parse headers", function(){
 
     deepEqual(headersObj, mimefuncs.headerLinesDecode(headersStr));
 });
+
+test("fromArrayBuffer", function(){
+    var len = 1 * 1024 * 1024,
+        input = new Uint8Array(len),
+        str = "";
+
+    for(var i=0; i< len; i++){
+        input[i] = i % 256;
+        str += String.fromCharCode(i % 256);
+    }
+
+    equal(mimefuncs.fromArrayBuffer(input.buffer), str);
+    equal(mimefuncs.fromArrayBuffer(input), str);
+});
