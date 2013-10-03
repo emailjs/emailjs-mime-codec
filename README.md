@@ -12,7 +12,7 @@ All input can use any charset (in this case, the value must not be a string but 
 
 Install with [volo](http://volojs.org/):
 
-    volo add Kreata/mimefuncs/v0.1.1
+    volo add Kreata/mimefuncs/v0.1.2
 
 ### AMD
 

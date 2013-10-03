@@ -415,10 +415,24 @@
         },
 
         /**
+         * Converts "binary" string to an ArrayBuffer
+         *
+         * @param {String} "binary" string
+         * @return {ArrayBuffer} arrayBuffer Octet stream buffer
+         */
+        toArrayBuffer: function(binaryString){
+            var arrayBuffer = new Uint8Array(new ArrayBuffer(binaryString.length));
+            for(var i = 0, len = binaryString.length; i < len; i++) {
+                arrayBuffer[i] = binaryString.charCodeAt(i);
+            }
+            return arrayBuffer;
+        },
+
+        /**
          * Converts an ArrayBuffer to "binary" string
          *
          * @param {ArrayBuffer} arrayBuffer Octet stream buffer
-         * @param {String} "binary" string
+         * @return {String} "binary" string
          */
         fromArrayBuffer: function(arrayBuffer){
 

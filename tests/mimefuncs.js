@@ -270,3 +270,15 @@ test("fromArrayBuffer", function(){
     equal(mimefuncs.fromArrayBuffer(input.buffer), str);
     equal(mimefuncs.fromArrayBuffer(input), str);
 });
+
+test("toArrayBuffer", function(){
+    var str = "",
+        i,
+        len = 1024;
+
+    for(i=0; i<len; i++){
+        str += String.fromCharCode(i % 256);
+    }
+
+    equal(mimefuncs.fromArrayBuffer(mimefuncs.toArrayBuffer(str)), str);
+});
