@@ -16,6 +16,8 @@
 // SOFTWARE.
 
 // AMD shim
+/* jshint browser: true, nonstandard: true, strict: true */
+/* global define: false, TextEncoder: false, TextDecoder: false */
 (function(root, factory) {
 
     "use strict";
@@ -462,6 +464,81 @@
             }
 
             return str;
+        },
+
+        /**
+         * Parses a header value with key=value arguments into a structured
+         * object.
+         *
+         *   parseHeaderValue('content-type: text/plain; CHARSET="UTF-8"') ->
+         *   {
+         *     "value": "text/plain",
+         *     "params": {
+         *       "charset": "UTF-8"
+         *     }
+         *   }
+         *
+         * @param {String} str Header value
+         * @return {Object} Header value as a parsed structure
+         */
+        parseHeaderValue: function(str){
+            var response = {
+                    value: false,
+                    params: {}
+                },
+                key = false,
+                value = "",
+                type = "value",
+                quote = false,
+                escaped = false,
+                chr;
+
+            for(var i=0, len = str.length; i<len; i++){
+                chr = str.charAt(i);
+                if(type == "key"){
+                    if(chr == "="){
+                        key = value.trim().toLowerCase();
+                        type = "value";
+                        value = "";
+                        continue;
+                    }
+                    value += chr;
+                }else{
+                    if(escaped){
+                        value += chr;
+                    }else if(chr == "\\"){
+                        escaped = true;
+                        continue;
+                    }else if(quote && chr == quote){
+                        quote = false;
+                    }else if(!quote && chr == '"'){
+                        quote = chr;
+                    }else if(!quote && chr == ";"){
+                        if(key === false){
+                            response.value = value.trim();
+                        }else{
+                            response.params[key] = value.trim();
+                        }
+                        type = "key";
+                        value = "";
+                    }else{
+                        value += chr;
+                    }
+                    escaped = false;
+
+                }
+            }
+
+            if(type == "value"){
+                if(key === false){
+                    response.value = value.trim();
+                }else{
+                    response.params[key] = value.trim();
+                }
+            }else if(value.trim()){
+                response.params[value.trim().toLowerCase()] = "";
+            }
+            return response;
         },
 
         /**

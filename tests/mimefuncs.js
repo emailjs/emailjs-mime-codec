@@ -282,3 +282,41 @@ test("toArrayBuffer", function(){
 
     equal(mimefuncs.fromArrayBuffer(mimefuncs.toArrayBuffer(str)), str);
 });
+
+test("parseHeaderValue, default value only", function(){
+    var str = "text/plain",
+        obj = {
+            value: "text/plain",
+            params: {}
+        };
+
+    deepEqual(mimefuncs.parseHeaderValue(str), obj);
+});
+
+test("parseHeaderValue, unquoted params", function(){
+    var str = "text/plain; CHARSET= UTF-8; format=flowed;",
+        obj = {
+            value: "text/plain",
+            params: {
+                "charset": "UTF-8",
+                "format": "flowed"
+            }
+        };
+
+    deepEqual(mimefuncs.parseHeaderValue(str), obj);
+});
+
+test("parseHeaderValue, quoted params", function(){
+    var str = "text/plain; filename= \";;;\\\"\"; format=flowed;",
+        obj = {
+            value: "text/plain",
+            params: {
+                "filename": ";;;\"",
+                "format": "flowed"
+            }
+        };
+
+    deepEqual(mimefuncs.parseHeaderValue(str), obj);
+});
+
+
