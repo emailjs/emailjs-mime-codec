@@ -438,7 +438,7 @@
          */
         fromArrayBuffer: function(arrayBuffer){
 
-            var maxSliceLength = 128 * 1024,
+            var maxSliceLength = 100 * 1024,
                 startIndex = 0,
                 sliceLen = 0,
                 slice, str = "";

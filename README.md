@@ -6,13 +6,21 @@ All input can use any charset (in this case, the value must not be a string but 
 
 **NB!** `mimefuncs` uses the following functions that might not be available on every browser: `ArrayBuffer`, `Uint8Array`, `TextEncoder`, `TextDecoder`. Most probably you can't use this module outside Firefox.
 
+[![Build Status](https://travis-ci.org/Kreata/mimefuncs.png)](https://travis-ci.org/Kreata/mimefuncs)
+
 ## Usage
 
 ### Volo
 
 Install with [volo](http://volojs.org/):
 
-    volo add Kreata/mimefuncs/v0.1.3
+    volo add Kreata/mimefuncs/master
+
+### Bower
+
+Install with [bower](http://bower.io/):
+
+    bower install mimefuncs
 
 ### AMD
 
@@ -241,7 +249,7 @@ cd mimefuncs
 volo install
 ```
 
-Tests are handled by QUnit. Open [testrunner.html](tests/testrunner.html) to run the tests.
+Tests are handled by QUnit. Open the [test runner](tests/index.html) to run the tests.
 
 ## License
 

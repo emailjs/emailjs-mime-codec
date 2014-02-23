@@ -1,0 +1,23 @@
+{
+  "name": "mimefuncs",
+  "main": "mimefuncs.js",
+  "version": "0.1.4",
+  "homepage": "https://github.com/Kreata/mimefuncs",
+  "authors": [
+    "Andris Reinman <andris@kreata.ee>"
+  ],
+  "description": "Encode and decode quoted printable and base64 strings",
+  "keywords": [
+    "MIME",
+    "Base64",
+    "Quoted-Printable"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
