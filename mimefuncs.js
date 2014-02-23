@@ -457,6 +457,7 @@
                     sliceLen = maxSliceLength;
                 }
 
+                // FIXME: Internet Explorer 10 and iOS < 6 do not have .slice method.
                 slice = arrayBuffer.slice(startIndex, startIndex + sliceLen);
                 str += String.fromCharCode.apply(String, new Uint8Array(slice));
 
