@@ -4,31 +4,39 @@
 
 All input can use any charset (in this case, the value must not be a string but an arraybuffer of Uint8Array) but output is always unicode.
 
-**NB!** `mimefuncs` uses the following functions that might not be available on every browser: `ArrayBuffer`, `Uint8Array`, `TextEncoder`, `TextDecoder`. Most probably you can't use this module outside Firefox.
+[![Build Status](https://travis-ci.org/whiteout-io/mimefuncs.png)](https://travis-ci.org/whiteout-io/mimefuncs)
 
-[![Build Status](https://travis-ci.org/Kreata/mimefuncs.png)](https://travis-ci.org/Kreata/mimefuncs)
+## StringEncoding API
 
-## Usage
+This module requires `TextEncoder` and `TextDecoder` to exist as part of the StringEncoding API (see: [MDN](https://developer.mozilla.org/en-US/docs/WebAPI/Encoding_API) [whatwg.org](http://encoding.spec.whatwg.org/#api)). Firefox 19+ is basically the only browser that supports this at the time of writing, while [Chromium in canary, not stable](https://code.google.com/p/chromium/issues/detail?id=243354). Luckily, [there is a polyfill](https://github.com/whiteout-io/stringencoding)!
 
-### Volo
+Also, if you use phantomjs, you might need [this polyfill for ArrayBuffer #slice](https://github.com/ttaubert/node-arraybuffer-slice)
+
+## Installation
+
+### [volo](http://volojs.org/):
 
 Install with [volo](http://volojs.org/):
 
-    volo add Kreata/mimefuncs/master
+    volo add whiteout-io/mimefuncs/0.1.5
 
-### Bower
+### [Bower](http://bower.io/):
 
-Install with [bower](http://bower.io/):
+    bower install git@github.com:whiteout-io/mimefuncs.git#0.1.5
 
-    bower install mimefuncs
+### [npm](https://www.npmjs.org/):
+
+    npm install https://github.com/whiteout-io/mimefuncs/tarball/0.1.5
+
+## Usage
 
 ### AMD
 
-Require [mimefuncs.js](mimefuncs.js) as `mimefuncs`
+Require [mimefuncs.js](src/mimefuncs.js) as `mimefuncs`
 
 ### Global context
 
-Include file [mimefuncs.js](mimefuncs.js) on the page.
+Include file [mimefuncs.js](src/mimefuncs.js) on the page.
 
 ```html
 <script src="mimefuncs.js"></script>
@@ -239,14 +247,12 @@ Outputs
 }
 ```
 
-## Tests
-
-Download `mimefuncs` source and install dependencies
+## Hands on
 
 ```bash
-git clone git@github.com:Kreata/mimefuncs.git
+git clone git@github.com:whiteout-io/mimefuncs.git
 cd mimefuncs
-volo install
+npm install && npm test
 ```
 
 Tests are handled by QUnit. Open the [test runner](tests/index.html) to run the tests.

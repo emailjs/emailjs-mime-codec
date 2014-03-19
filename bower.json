@@ -1,23 +1,26 @@
 {
-  "name": "mimefuncs",
-  "main": "mimefuncs.js",
-  "version": "0.1.4",
-  "homepage": "https://github.com/Kreata/mimefuncs",
-  "authors": [
-    "Andris Reinman <andris@kreata.ee>"
-  ],
-  "description": "Encode and decode quoted printable and base64 strings",
-  "keywords": [
-    "MIME",
-    "Base64",
-    "Quoted-Printable"
-  ],
-  "license": "MIT",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ]
+    "name": "mimefuncs",
+    "description": "Encode and decode quoted printable and base64 strings",
+    "version": "0.1.5",
+    "main": "src/mimefuncs.js",
+    "homepage": "https://github.com/whiteout-io/mimefuncs",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/whiteout-io/addressparser.git"
+    },
+    "license": "MIT",
+    "keywords": ["MIME", "Base64", "Quoted-Printable"],
+    "authors": ["Andris Reinman <andris@kreata.ee>"],
+    "ignore": [
+        "node_modules",
+        "bower_components",
+        "test",
+        ".gitignore",
+        ".jshintrc",
+        ".travis.yml",
+        "Gruntfile.js",
+        "LICENSE",
+        "package.json",
+        "README.md"
+    ]
 }
