@@ -1,10 +1,11 @@
 'use strict';
 
 require.config({
-    baseUrl: '../src',
+    baseUrl: '../',
     paths: {
         'test': '../test',
-        'chai': '../node_modules/chai/chai'
+        'chai': '../node_modules/chai/chai',
+        'stringencoding': '../node_modules/stringencoding/dist/stringencoding'
     }
 });
 

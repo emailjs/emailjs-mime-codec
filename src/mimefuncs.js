@@ -22,11 +22,22 @@
     'use strict';
 
     if (typeof define === 'function' && define.amd) {
-        define(factory);
+        define(['stringencoding'], function(encoding) {
+            return factory(encoding.TextEncoder, encoding.TextDecoder, root.btoa, root.atob);
+        });
+    } else if (typeof exports === 'object') {
+        var encoding = require('stringencoding'),
+            btoaShim = function(str) {
+                return new Buffer(str, 'binary').toString("base64");
+            },
+            atobShim = function(str) {
+                return new Buffer(str, 'base64').toString('binary');
+            };
+        module.exports = factory(encoding.TextEncoder, encoding.TextDecoder, btoaShim, atobShim);
     } else {
-        root.mimefuncs = factory();
+        root.mimefuncs = factory(root.TextEncoder, root.TextDecoder, root.btoa, root.atob);
     }
-}(this, function() {
+}(this, function(TextEncoder, TextDecoder, btoa, atob) {
     'use strict';
 
     var mimefuncs = {
@@ -836,7 +847,7 @@
             if (typeof data === 'string') {
                 // window.btoa uses pseudo binary encoding, so unicode strings
                 // need to be converted before encoding
-                return window.btoa(unescape(encodeURIComponent(data)));
+                return btoa(unescape(encodeURIComponent(data)));
             }
 
             var len = data.byteLength,
@@ -885,7 +896,7 @@
     //
     // Helper Function
     //
-    
+
     // Apparently, some browsers can't handle String.fromCharCode.apply
     // https://github.com/ariya/phantomjs/issues/11172
     function arr2str(arr) {

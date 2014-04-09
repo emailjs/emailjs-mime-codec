@@ -1,7 +1,7 @@
 {
     "name": "mimefuncs",
     "description": "Encode and decode quoted printable and base64 strings",
-    "version": "0.1.5",
+    "version": "0.2.0",
     "main": "src/mimefuncs",
     "homepage": "https://github.com/whiteout-io/mimefuncs",
     "repository": {
@@ -18,18 +18,21 @@
     "scripts": {
         "test": "grunt"
     },
-    "dependencies": {},
+    "dependencies": {
+        "stringencoding": "https://github.com/whiteout-io/stringencoding/tarball/v0.1.0"
+    },
     "devDependencies": {
         "chai": "~1.8.1",
         "grunt": "~0.4.1",
         "grunt-mocha-phantomjs": "~0.4.0",
         "grunt-contrib-connect": "~0.6.0",
         "grunt-contrib-jshint": "~0.8.0",
+        "grunt-mocha-test": "~0.10.0",
         "mocha": "~1.16.2",
         "phantomjs": "~1.9.7-1",
         "requirejs": "~2.1.10",
-        "stringencoding": "https://github.com/whiteout-io/stringencoding/tarball/v0.1.0",
-        "arraybuffer-slice": "0.0.2"
+        "arraybuffer-slice": "0.0.2",
+        "amdefine": "^0.1.0"
     },
     "volo": {}
 }

@@ -1,5 +1,10 @@
-define(['chai', 'mimefuncs'], function(chai, mimefuncs) {
-    'use strict';
+'use strict';
+
+if (typeof define !== 'function') {
+    var define = require('amdefine')(module);
+}
+
+define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
 
     var expect = chai.expect;
     chai.Assertion.includeStack = true;
@@ -370,18 +375,18 @@ define(['chai', 'mimefuncs'], function(chai, mimefuncs) {
 
         describe('#base64', function() {
             describe('#encode', function() {
-        it('should convert UTF-8 string to base64', function() {
-            var str = 'abc123ÕÄÖÜŠŽ신',
-                b64 = 'YWJjMTIzw5XDhMOWw5zFoMW97Iug';
+                it('should convert UTF-8 string to base64', function() {
+                    var str = 'abc123ÕÄÖÜŠŽ신',
+                        b64 = 'YWJjMTIzw5XDhMOWw5zFoMW97Iug';
 
-            expect(b64).to.equal(mimefuncs.base64.encode(str));
-        });
+                    expect(b64).to.equal(mimefuncs.base64.encode(str));
+                });
 
-        it('should convert Uint8Array to Base64', function() {
-            var buf = new Uint8Array([0x61, 0x62, 0x63, 0x31, 0x32, 0x33, 0xc3, 0x95, 0xc3, 0x84, 0xc3, 0x96, 0xc3, 0x9c, 0xc5, 0xa0, 0xc5, 0xbd, 0xec, 0x8b, 0xa0]),
-                b64 = 'YWJjMTIzw5XDhMOWw5zFoMW97Iug';
-            expect(b64).to.equal(mimefuncs.base64.encode(buf));
-        });
+                it('should convert Uint8Array to Base64', function() {
+                    var buf = new Uint8Array([0x61, 0x62, 0x63, 0x31, 0x32, 0x33, 0xc3, 0x95, 0xc3, 0x84, 0xc3, 0x96, 0xc3, 0x9c, 0xc5, 0xa0, 0xc5, 0xbd, 0xec, 0x8b, 0xa0]),
+                        b64 = 'YWJjMTIzw5XDhMOWw5zFoMW97Iug';
+                    expect(b64).to.equal(mimefuncs.base64.encode(buf));
+                });
             });
 
             describe('#decode', function() {
@@ -417,12 +422,12 @@ define(['chai', 'mimefuncs'], function(chai, mimefuncs) {
 
         describe('#charset', function() {
             describe('#encode', function() {
-            it('should encode UTF-8 to ArrayBuffer', function() {
-                var str = '신',
-                    encoded = new Uint8Array([0xEC, 0x8B, 0xA0]);
+                it('should encode UTF-8 to ArrayBuffer', function() {
+                    var str = '신',
+                        encoded = new Uint8Array([0xEC, 0x8B, 0xA0]);
 
-                expect(encoded).to.deep.equal(mimefuncs.charset.encode(str));
-            });
+                    expect(encoded).to.deep.equal(mimefuncs.charset.encode(str));
+                });
             });
 
             describe('#decode', function() {
