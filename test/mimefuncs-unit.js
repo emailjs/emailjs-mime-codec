@@ -249,6 +249,10 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
                 expect(outputStr).to.equal(encoded);
                 expect(inputStr).to.equal(mimefuncs.mimeWordsDecode(encoded));
             });
+
+            it('should ignore language param', function() {
+                expect('Hello: See on õhin test').to.equal(mimefuncs.mimeWordsDecode('Hello: =?UTF-8*EN?q?See_on_=C3=B5hin_test?='));
+            });
         });
 
         describe('#foldLines', function() {
@@ -366,6 +370,26 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
                         params: {
                             'filename': ';;;"',
                             'format': 'flowed'
+                        }
+                    };
+
+                expect(mimefuncs.parseHeaderValue(str)).to.deep.equal(obj);
+            });
+
+            it('should handle multi line values', function() {
+                var str = 'text/plain; single_encoded*="UTF-8\'\'%C3%95%C3%84%C3%96%C3%9C";\n' +
+                    ' multi_encoded*0*=UTF-8\'\'%C3%96%C3%9C;\n' +
+                    ' multi_encoded*1*=%C3%95%C3%84;\n' +
+                    ' no_charset*0=OA;\n' +
+                    ' no_charset*1=OU;\n' +
+                    ' invalid*=utf-8\'\' _?\'=%ab',
+                    obj = {
+                        value: 'text/plain',
+                        params: {
+                            'single_encoded': '=?UTF-8?Q?=C3=95=C3=84=C3=96=C3=9C?=',
+                            'multi_encoded': '=?UTF-8?Q?=C3=96=C3=9C=C3=95=C3=84?=',
+                            'no_charset': 'OAOU',
+                            'invalid': '=?utf-8?Q?_=5f=3f\'=3d=ab?='
                         }
                     };
 
