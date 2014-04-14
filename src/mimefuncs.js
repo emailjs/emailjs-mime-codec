@@ -281,12 +281,16 @@
 
             var fromCharset, encoding, match;
 
-            match = str.match(/^\=\?([\w_\-]+)\?([QqBb])\?([^\?]+)\?\=$/i);
+            match = str.match(/^\=\?([\w_\-\*]+)\?([QqBb])\?([^\?]+)\?\=$/i);
             if (!match) {
                 return str;
             }
 
-            fromCharset = match[1];
+            // RFC2231 added language tag to the encoding
+            // see: https://tools.ietf.org/html/rfc2231#section-5
+            // this implementation silently ignores this tag
+            fromCharset = match[1].split('*').shift();
+
             encoding = (match[2] || 'Q').toString().toUpperCase();
             str = (match[3] || '').replace(/_/g, ' ');
 
@@ -310,7 +314,7 @@
             str = (str || '').toString();
             str = str.
             replace(/(=\?[^?]+\?[QqBb]\?[^?]+\?=)\s+(?==\?[^?]+\?[QqBb]\?[^?]+\?=)/g, '$1').
-            replace(/\=\?([\w_\-]+)\?([QqBb])\?[^\?]+\?\=/g, function(mimeWord) {
+            replace(/\=\?([\w_\-\*]+)\?([QqBb])\?[^\?]+\?\=/g, function(mimeWord) {
                 return mimefuncs.mimeWordDecode(mimeWord);
             });
 
@@ -555,6 +559,70 @@
             } else if (value.trim()) {
                 response.params[value.trim().toLowerCase()] = '';
             }
+
+            // handle parameter value continuations
+            // https://tools.ietf.org/html/rfc2231#section-3
+
+            // preprocess values
+            Object.keys(response.params).forEach(function(key) {
+                var actualKey, nr, match, value;
+                if ((match = key.match(/(\*(\d+)|\*(\d+)\*|\*)$/))) {
+                    actualKey = key.substr(0, match.index);
+                    nr = Number(match[2] || match[3]) || 0;
+
+                    if (!response.params[actualKey] || typeof response.params[actualKey] !== 'object') {
+                        response.params[actualKey] = {
+                            charset: false,
+                            values: []
+                        };
+                    }
+
+                    value = response.params[key];
+
+                    if (nr === 0 && match[0].substr(-1) === '*' && (match = value.match(/^([^']*)'[^']*'(.*)$/))) {
+                        response.params[actualKey].charset = match[1] || 'iso-8859-1';
+                        value = match[2];
+                    }
+
+                    response.params[actualKey].values[nr] = value;
+
+                    // remove the old reference
+                    delete response.params[key];
+                }
+            });
+
+            // concatenate split rfc2231 strings and convert encoded strings to mime encoded words
+            Object.keys(response.params).forEach(function(key) {
+                var value;
+                if (response.params[key] && Array.isArray(response.params[key].values)) {
+                    value = response.params[key].values.map(function(val) {
+                        return val || '';
+                    }).join('');
+
+                    if (response.params[key].charset) {
+                        // convert "%AB" to "=?charset?Q?=AB?="
+                        response.params[key] = '=?' +
+                            response.params[key].charset +
+                            '?Q?' +
+                            value.
+                        // fix invalidly encoded chars
+                        replace(/[=\?_\s]/g, function(s) {
+                            var c = s.charCodeAt(0).toString(16);
+                            if (s === ' ') {
+                                return '_';
+                            } else {
+                                return '%' + (c.length < 2 ? '0' : '') + c;
+                            }
+                        }).
+                        // change from urlencoding to percent encoding
+                        replace(/%/g, '=') +
+                            '?=';
+                    } else {
+                        response.params[key] = value;
+                    }
+                }
+            }.bind(this));
+
             return response;
         },
 
