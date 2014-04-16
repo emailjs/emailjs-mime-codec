@@ -18,15 +18,15 @@ Also, if you use phantomjs, you might need [this polyfill for ArrayBuffer #slice
 
 Install with [volo](http://volojs.org/):
 
-    volo add whiteout-io/mimefuncs/v0.1.5
+    volo add whiteout-io/mimefuncs/v0.2.1
 
 ### [Bower](http://bower.io/):
 
-    bower install git@github.com:whiteout-io/mimefuncs.git#v0.1.5
+    bower install git@github.com:whiteout-io/mimefuncs.git#v0.2.1
 
 ### [npm](https://www.npmjs.org/):
 
-    npm install https://github.com/whiteout-io/mimefuncs/tarball/v0.1.5
+    npm install https://github.com/whiteout-io/mimefuncs/tarball/v0.2.1
 
 ## Usage
 
