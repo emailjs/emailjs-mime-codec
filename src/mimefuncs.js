@@ -350,11 +350,12 @@
                     result += line;
                     pos += line.length;
                     continue;
-                } else if ((match = line.match(/(\s+)[^\s]*$/))) {
-                    line = line.substr(0, line.length - (match[0].length - ( !! afterSpace ? (match[1] || '').length : 0)));
+                } else if ((match = line.match(/(\s+)[^\s]*$/)) && match[0].length - (afterSpace ? (match[1] || '').length : 0) < line.length) {
+                    line = line.substr(0, line.length - (match[0].length - (afterSpace ? (match[1] || '').length : 0)));
                 } else if ((match = str.substr(pos + line.length).match(/^[^\s]+(\s*)/))) {
                     line = line + match[0].substr(0, match[0].length - (!afterSpace ? (match[1] || '').length : 0));
                 }
+
                 result += line;
                 pos += line.length;
                 if (pos < len) {
