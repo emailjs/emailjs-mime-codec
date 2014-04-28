@@ -10,8 +10,6 @@ All input can use any charset (in this case, the value must not be a string but 
 
 This module requires `TextEncoder` and `TextDecoder` to exist as part of the StringEncoding API (see: [MDN](https://developer.mozilla.org/en-US/docs/WebAPI/Encoding_API) [whatwg.org](http://encoding.spec.whatwg.org/#api)). Firefox 19+ is basically the only browser that supports this at the time of writing, while [Chromium in canary, not stable](https://code.google.com/p/chromium/issues/detail?id=243354). Luckily, [there is a polyfill](https://github.com/whiteout-io/stringencoding)!
 
-Also, if you use phantomjs, you might need [this polyfill for ArrayBuffer #slice](https://github.com/ttaubert/node-arraybuffer-slice)
-
 ## Installation
 
 ### [volo](http://volojs.org/):
@@ -58,7 +56,7 @@ Folds a long line according to the RFC 5322 <http://tools.ietf.org/html/rfc5322#
 
 For example:
 
-    mimefuncs.foldLines("Content-Type: multipart/alternative; boundary=\"----zzzz----\"")
+    mimefuncs.foldLines('Content-Type: multipart/alternative; boundary="----zzzz----"')
 
 results in
 
@@ -71,14 +69,14 @@ Encodes a string into mime encoded word format <http://en.wikipedia.org/wiki/MIM
 
     mimefuncs.mimeWordEncode(str [, mimeWordEncoding[, maxLength[, fromCharset]]]) -> String
 
-  * **str** - String or ArrayBuffer (Uint8Array) to be encoded
-  * **mimeWordEncoding** - Encoding for the mime word, either Q or B (default is "Q")
+  * **str** - String or Uint8Array to be encoded
+  * **mimeWordEncoding** - Encoding for the mime word, either Q or B (default is 'Q')
   * **maxLength** - If set, split mime words into several chunks if needed
-  * **fromCharset** - If the first parameter is an arraybuffer, use this encoding to decode the value to unicode
+  * **fromCharset** - If the first parameter is a typed array, use this encoding to decode the value to unicode
 
 For example:
 
-    mimefuncs.mimeWordEncode("See on õhin test", "Q");
+    mimefuncs.mimeWordEncode('See on õhin test', 'Q');
 
 Becomes with UTF-8 and Quoted-printable encoding
 
@@ -94,7 +92,7 @@ Decodes a string from mime encoded word format (see also `mimeWordEncode`)
 
 For example
 
-    mimefuncs.mimeWordDecode("=?UTF-8?Q?See_on_=C3=B5hin_test?=");
+    mimefuncs.mimeWordDecode('=?UTF-8?Q?See_on_=C3=B5hin_test?=');
 
 will become
 
@@ -107,8 +105,8 @@ length for the generated string is 76 + 2 bytes.
 
     mimefuncs.quotedPrintableEncode(str [, fromCharset]) -> String
 
-  * **str** - String or an arraybuffer to mime encode
-  * **fromCharset** - If the first parameter is an arraybuffer, use this charset to decode the value to unicode before encoding
+  * **str** - String or an Uint8Array to mime encode
+  * **fromCharset** - If the first parameter is a typed array, use this charset to decode the value to unicode before encoding
 
 ### quotedPrintableDecode
 
@@ -126,8 +124,8 @@ length for the generated string is 76 + 2 bytes.
 
     mimefuncs.base64Encode(str [, fromCharset]) -> String
 
-  * **str** - String or an arraybuffer to base64 encode
-  * **fromCharset** - If the first parameter is an arraybuffer, use this charset to decode the value to unicode before encoding
+  * **str** - String or an Uint8Array to base64 encode
+  * **fromCharset** - If the first parameter is a typed array, use this charset to decode the value to unicode before encoding
 
 ### base64Decode
 
@@ -140,9 +138,9 @@ Decodes a string from Base64 format (see also `base64Encode`) to an unencoded un
 
 ### base64.decode
 
-Decodes a string from Base64 format to an ArrayBuffer.
+Decodes a string from Base64 format to an Uint8Array.
 
-    mimefuncs.base64.decode(str) -> ArrayBuffer
+    mimefuncs.base64.decode(str) -> Uint8Array
 
   * **str** Base64 encoded string
 
@@ -152,10 +150,10 @@ Encodes a string to a mime word.
 
     mimefuncs.mimeWordEncode(str[, mimeWordEncoding[, maxLength[, fromCharset]]]) -> String
 
-  * **str** - String or arraybuffer to be encoded
-  * **mimeWordEncoding** - Encoding for the mime word, either Q or B (default is "Q")
+  * **str** - String or Uint8Array to be encoded
+  * **mimeWordEncoding** - Encoding for the mime word, either Q or B (default is 'Q')
   * **maxLength** - If set, split mime words into several chunks if needed
-  * **fromCharset** - If the first parameter is an arraybuffer, use this charset to decode the value to unicode before encoding
+  * **fromCharset** - If the first parameter is a typed array, use this charset to decode the value to unicode before encoding
 
 ### mimeWordsEncode
 
@@ -163,10 +161,10 @@ Encodes non ascii sequences in a string to mime words.
 
     mimefuncs.mimeWordsEncode(str[, mimeWordEncoding[, maxLength[, fromCharset]]]) -> String
 
-  * **str** - String or arraybuffer to be encoded
-  * **mimeWordEncoding** - Encoding for the mime word, either Q or B (default is "Q")
+  * **str** - String or Uint8Array to be encoded
+  * **mimeWordEncoding** - Encoding for the mime word, either Q or B (default is 'Q')
   * **maxLength** - If set, split mime words into several chunks if needed
-  * **fromCharset** - If the first parameter is an arraybuffer, use this charset to decode the value to unicode before encoding
+  * **fromCharset** - If the first parameter is a typed array, use this charset to decode the value to unicode before encoding
 
 ### mimeWordDecode
 
@@ -192,11 +190,11 @@ Encodes and folds a header line for a MIME message header. Shorthand for `mimeWo
 
   * **key** - Key name, will not be encoded
   * **value** - Value to be encoded
-  * **fromCharset** - If the `value` parameter is an arraybuffer, use this charset to decode the value to unicode before encoding
+  * **fromCharset** - If the `value` parameter is a typed array, use this charset to decode the value to unicode before encoding
 
 ### headerLineDecode
 
-Unfolds a header line and splits it to key and value pair. The return value is in the form of `{key: "subject", value: "test"}`. The value is not mime word decoded, you need to do your own decoding based on the rules for the specific header key.
+Unfolds a header line and splits it to key and value pair. The return value is in the form of `{key: 'subject', value: 'test'}`. The value is not mime word decoded, you need to do your own decoding based on the rules for the specific header key.
 
     mimefuncs.headerLineDecode(headerLine) -> Object
 
@@ -213,13 +211,21 @@ Return value is an object of headers, where header keys are object keys. NB! Sev
 
   * **headers** - Headers string
 
-### fromArrayBuffer
+### fromTypedArray
 
-Converts an `ArrayBuffer` or `Uint8Array` value to "binary" string.
+Converts an `ArrayBuffer` or `Uint8Array` value to 'binary' string.
 
-    mimefuncs.fromArrayBuffer(arrayBuffer) -> String
+    mimefuncs.fromTypedArray(data) -> String
 
-  * **arrayBuffer** - an `ArrayBuffer` or `Uint8Array` value
+  * **data** - an `ArrayBuffer` or `Uint8Array` value
+
+### toTypedArray
+
+Converts a 'binary' string to an `Uint8Array` object.
+
+    mimefuncs.toTypedArray(data) -> Uint8Array
+
+  * **data** - a 'binary' string
 
 ### parseHeaderValue
 
