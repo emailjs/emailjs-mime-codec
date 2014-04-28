@@ -316,8 +316,8 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
             });
         });
 
-        describe('#fromArrayBuffer', function() {
-            it('should create ArrayBuffer', function() {
+        describe('#toTypedArray', function() {
+            it('should create Uint8Array', function() {
                 var len = 1 * 1024 * 1024,
                     input = new Uint8Array(len),
                     str = '';
@@ -327,13 +327,13 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
                     str += String.fromCharCode(i % 256);
                 }
 
-                expect(mimefuncs.fromArrayBuffer(input.buffer)).to.equal(str);
-                expect(mimefuncs.fromArrayBuffer(input)).to.equal(str);
+                expect(mimefuncs.fromTypedArray(input.buffer)).to.equal(str);
+                expect(mimefuncs.fromTypedArray(input)).to.equal(str);
             });
         });
 
-        describe('#toArrayBuffer', function() {
-            it('should create string from ArrayBuffer', function() {
+        describe('#fromTypedArray', function() {
+            it('should create a string from Uint8Array', function() {
                 var str = '',
                     i,
                     len = 1024;
@@ -342,7 +342,7 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
                     str += String.fromCharCode(i % 256);
                 }
 
-                expect(mimefuncs.fromArrayBuffer(mimefuncs.toArrayBuffer(str))).to.equal(str);
+                expect(mimefuncs.fromTypedArray(mimefuncs.toTypedArray(str))).to.equal(str);
             });
         });
 

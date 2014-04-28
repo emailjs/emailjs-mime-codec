@@ -46,14 +46,14 @@
          * byte value in hex. This function does not convert linebreaks etc. it
          * only escapes character sequences
          *
-         * @param {String|Uint8Array} str Either a string or an ArrayBuffer
+         * @param {String|Uint8Array} data Either a string or an Uint8Array
          * @param {String} [fromCharset='UTF-8'] Source encoding
          * @return {String} Mime encoded string
          */
-        mimeEncode: function(str, fromCharset) {
+        mimeEncode: function(data, fromCharset) {
             fromCharset = fromCharset || 'UTF-8';
 
-            var buffer = mimefuncs.charset.convert(str || '', fromCharset),
+            var buffer = mimefuncs.charset.convert(data || '', fromCharset),
                 ranges = [
                     [0x09],
                     [0x0A],
@@ -92,7 +92,7 @@
             var encodedBytesCount = (str.match(/\=[\da-fA-F]{2}/g) || []).length,
                 bufferLength = str.length - encodedBytesCount * 2,
                 chr, hex,
-                buffer = new Uint8Array(new ArrayBuffer(bufferLength)),
+                buffer = new Uint8Array(bufferLength),
                 bufferPos = 0;
 
             for (var i = 0, len = str.length; i < len; i++) {
@@ -109,20 +109,20 @@
         },
 
         /**
-         * Encodes a string or an arraybuffer of given charset into unicode
+         * Encodes a string or an typed array of given charset into unicode
          * base64 string. Also adds line breaks
          *
-         * @param {String|Uint8Array} str String to be base64 encoded
+         * @param {String|Uint8Array} data String to be base64 encoded
          * @param {String} [fromCharset='UTF-8']
          * @return {String} Base64 encoded string
          */
-        base64Encode: function(str, fromCharset) {
+        base64Encode: function(data, fromCharset) {
             var buf, b64;
 
-            if (fromCharset !== 'binary' && typeof str !== 'string') {
-                buf = mimefuncs.charset.convert(str || '', fromCharset);
+            if (fromCharset !== 'binary' && typeof data !== 'string') {
+                buf = mimefuncs.charset.convert(data || '', fromCharset);
             } else {
-                buf = str;
+                buf = data;
             }
 
             b64 = mimefuncs.base64.encode(buf);
@@ -137,21 +137,21 @@
          * @return {String} Decoded unicode string
          */
         base64Decode: function(str, fromCharset) {
-            var buf = mimefuncs.base64.decode(str || '', 'arraybuffer');
+            var buf = mimefuncs.base64.decode(str || '', 'buffer');
             return mimefuncs.charset.decode(buf, fromCharset);
         },
 
         /**
-         * Encodes a string or an arraybuffer into a quoted printable encoding
+         * Encodes a string or an Uint8Array into a quoted printable encoding
          * This is almost the same as mimeEncode, except line breaks will be changed
          * as well to ensure that the lines are never longer than allowed length
          *
-         * @param {String|Uint8Array} str String or an arraybuffer to mime encode
+         * @param {String|Uint8Array} data String or an Uint8Array to mime encode
          * @param {String} [fromCharset='UTF-8'] Original charset of the string
          * @return {String} Mime encoded string
          */
-        quotedPrintableEncode: function(str, fromCharset) {
-            var mimeEncodedStr = mimefuncs.mimeEncode(str, fromCharset);
+        quotedPrintableEncode: function(data, fromCharset) {
+            var mimeEncodedStr = mimefuncs.mimeEncode(data, fromCharset);
 
             mimeEncodedStr = mimeEncodedStr.
             // fix line breaks, ensure <CR><LF>
@@ -182,15 +182,15 @@
         },
 
         /**
-         * Encodes a string to an UTF-8 MIME Word (rfc2047)
+         * Encodes a string or an Uint8Array to an UTF-8 MIME Word (rfc2047)
          *
-         * @param {String|Uint8Array} str String to be encoded
+         * @param {String|Uint8Array} data String to be encoded
          * @param {String} mimeWordEncoding='Q' Encoding for the mime word, either Q or B
          * @param {Number} [maxLength=0] If set, split mime words into several chunks if needed
          * @param {String} [fromCharset='UTF-8'] Source sharacter set
          * @return {String} Single or several mime words joined together
          */
-        mimeWordEncode: function(str, mimeWordEncoding, maxLength, fromCharset) {
+        mimeWordEncode: function(data, mimeWordEncoding, maxLength, fromCharset) {
             mimeWordEncoding = (mimeWordEncoding || 'Q').toString().toUpperCase().trim().charAt(0);
 
             if (!fromCharset && typeof maxLength === 'string' && !maxLength.match(/^[0-9]+$/)) {
@@ -209,13 +209,13 @@
             }
 
             if (mimeWordEncoding === 'Q') {
-                encodedStr = mimefuncs.mimeEncode(str, fromCharset);
+                encodedStr = mimefuncs.mimeEncode(data, fromCharset);
                 encodedStr = encodedStr.replace(/[\r\n\t_]/g, function(chr) {
                     var code = chr.charCodeAt(0);
                     return '=' + (code < 0x10 ? '0' : '') + code.toString(16).toUpperCase();
                 }).replace(/\s/g, '_');
             } else if (mimeWordEncoding === 'B') {
-                encodedStr = typeof str === 'string' ? str : mimefuncs.decode(str, fromCharset);
+                encodedStr = typeof data === 'string' ? data : mimefuncs.decode(data, fromCharset);
                 maxLength = Math.max(3, (maxLength - maxLength % 4) / 4 * 3);
             }
 
@@ -246,13 +246,13 @@
         /**
          * Finds word sequences with non ascii text and converts these to mime words
          *
-         * @param {String|Uint8Array} str String to be encoded
+         * @param {String|Uint8Array} data String to be encoded
          * @param {String} mimeWordEncoding='Q' Encoding for the mime word, either Q or B
          * @param {Number} [maxLength=0] If set, split mime words into several chunks if needed
          * @param {String} [fromCharset='UTF-8'] Source sharacter set
          * @return {String} String with possible mime words
          */
-        mimeWordsEncode: function(str, mimeWordEncoding, maxLength, fromCharset) {
+        mimeWordsEncode: function(data, mimeWordEncoding, maxLength, fromCharset) {
             if (!fromCharset && typeof maxLength === 'string' && !maxLength.match(/^[0-9]+$/)) {
                 fromCharset = maxLength;
                 maxLength = undefined;
@@ -260,7 +260,7 @@
 
             maxLength = maxLength || 0;
 
-            var decodedValue = mimefuncs.charset.decode(mimefuncs.charset.convert((str || ''), fromCharset)),
+            var decodedValue = mimefuncs.charset.decode(mimefuncs.charset.convert((data || ''), fromCharset)),
                 encodedValue;
 
             encodedValue = decodedValue.replace(/([^\s\u0080-\uFFFF]*[\u0080-\uFFFF]+[^\s\u0080-\uFFFF]*(?:\s+[^\s\u0080-\uFFFF]*[\u0080-\uFFFF]+[^\s\u0080-\uFFFF]*\s*)?)+/g, function(match) {
@@ -429,7 +429,6 @@
                 if (!headersObj[key]) {
                     headersObj[key] = value;
                 } else {
-
                     headersObj[key] = [].concat(headersObj[key], value);
                 }
             }
@@ -438,51 +437,35 @@
         },
 
         /**
-         * Converts 'binary' string to an ArrayBuffer
+         * Converts 'binary' string to an Uint8Array
          *
          * @param {String} 'binary' string
-         * @return {ArrayBuffer} arrayBuffer Octet stream buffer
+         * @return {Uint8Array} Octet stream buffer
          */
-        toArrayBuffer: function(binaryString) {
-            var arrayBuffer = new Uint8Array(new ArrayBuffer(binaryString.length));
+        toTypedArray: function(binaryString) {
+            var buf = new Uint8Array(binaryString.length);
             for (var i = 0, len = binaryString.length; i < len; i++) {
-                arrayBuffer[i] = binaryString.charCodeAt(i);
+                buf[i] = binaryString.charCodeAt(i);
             }
-            return arrayBuffer;
+            return buf;
         },
 
         /**
-         * Converts an ArrayBuffer to 'binary' string
+         * Converts an Uint8Array to 'binary' string
          *
-         * @param {ArrayBuffer} arrayBuffer Octet stream buffer
+         * @param {Uint8Array} buf Octet stream buffer
          * @return {String} 'binary' string
          */
-        fromArrayBuffer: function(arrayBuffer) {
+        fromTypedArray: function(buf) {
+            var i, l, str = '';
 
-            var maxSliceLength = 100 * 1024,
-                startIndex = 0,
-                sliceLen = 0,
-                slice, str = '';
-
-            // If it is a typed array, take ArrayBuffer only
-            if (arrayBuffer.buffer) {
-                arrayBuffer = arrayBuffer.buffer;
+            // ensure the value is a Uint8Array, not ArrayBuffer if used
+            if (!buf.buffer) {
+                buf = new Uint8Array(buf);
             }
 
-            // Array has limited length, so we split the input into
-            // several slices if needed
-            while (startIndex < arrayBuffer.byteLength) {
-                sliceLen = arrayBuffer.byteLength - startIndex;
-
-                if (sliceLen > maxSliceLength) {
-                    sliceLen = maxSliceLength;
-                }
-
-                // FIXME: Internet Explorer 10 and iOS < 6 do not have .slice method.
-                slice = arrayBuffer.slice(startIndex, startIndex + sliceLen);
-                str += arr2str(new Uint8Array(slice));
-
-                startIndex += sliceLen;
+            for (i = 0, l = buf.length; i < l; i++) {
+                str += String.fromCharCode(buf[i]);
             }
 
             return str;
@@ -822,53 +805,61 @@
     mimefuncs.charset = {
 
         /**
-         * Encodes an unicode string into an arraybuffer (Uint8Array) object as UTF-8
+         * Encodes an unicode string into an Uint8Array object as UTF-8
          *
          * TextEncoder only supports unicode encodings (utf-8, utf16le/be) but no other,
          * so we force UTF-8 here.
          *
          * @param {String} str String to be encoded
-         * @return {Uint8Array} UTF-8 encoded arraybuffer
+         * @return {Uint8Array} UTF-8 encoded typed array
          */
         encode: function(str) {
             return new TextEncoder('UTF-8').encode(str);
         },
 
         /**
-         * Decodes a string from arraybuffer to an unicode string using specified encoding
+         * Decodes a string from Uint8Array to an unicode string using specified encoding
          *
-         * @param {Uint8Array} arraybuffer Binary data to be decoded
+         * @param {Uint8Array} buf Binary data to be decoded
          * @param {String} [fromCharset='UTF-8'] Binary data is decoded into string using this charset
          * @return {String} Decded string
          */
-        decode: function(arraybuffer, fromCharset) {
+        decode: function(buf, fromCharset) {
             fromCharset = mimefuncs.charset.normalizeCharset(fromCharset || 'UTF-8');
+
+            // ensure the value is a Uint8Array, not ArrayBuffer if used
+            if (!buf.buffer) {
+                buf = new Uint8Array(buf);
+            }
+
             try {
-                return new TextDecoder(fromCharset).decode(arraybuffer);
+                return new TextDecoder(fromCharset).decode(buf);
             } catch (E) {
-                return String.fromCharCode.apply(String, arraybuffer);
+                return this.fromTypedArray(buf);
             }
 
         },
 
         /**
-         * Convert a string from specifiec encoding to UTF-8 ArrayBuffer
+         * Convert a string from specific encoding to UTF-8 Uint8Array
          *
          * @param {String|Uint8Array} str String to be encoded
          * @param {String} [fromCharset='UTF-8'] Source encoding for the string
-         * @return {Uint8Array} UTF-8 encoded arraybuffer
+         * @return {Uint8Array} UTF-8 encoded typed array
          */
-        convert: function(str, fromCharset) {
+        convert: function(data, fromCharset) {
             fromCharset = mimefuncs.charset.normalizeCharset(fromCharset || 'UTF-8');
+
             var bufString;
-            if (typeof str !== 'string') {
+
+            if (typeof data !== 'string') {
                 if (fromCharset.match(/^utf[\-_]?8$/)) {
-                    return str;
+                    return data;
                 }
-                bufString = mimefuncs.charset.decode(str, fromCharset);
+                bufString = mimefuncs.charset.decode(data, fromCharset);
                 return mimefuncs.charset.encode(bufString);
             }
-            return mimefuncs.charset.encode(str);
+            return mimefuncs.charset.encode(data);
         },
 
         /**
@@ -922,9 +913,14 @@
             var len = data.byteLength,
                 binStr = '';
 
+            if (!data.buffer) {
+                data.buffer = new Uint8Array(data);
+            }
+
             for (var i = 0; i < len; i++) {
                 binStr += String.fromCharCode(data[i]);
             }
+
             return btoa(binStr);
         },
 
@@ -934,7 +930,7 @@
          * NB! Throws on invalid sequence. Spaces are allowed.
          *
          * @param {String} data Base64 encoded data
-         * @param {String} [outputEncoding='arraybuffer'] Output encoding, either 'string' or 'arraybuffer' (Uint8Array)
+         * @param {String} [outputEncoding='buffer'] Output encoding, either 'string' or 'buffer' (Uint8Array)
          * @return {String|Uint8Array} Decoded string
          */
         decode: function(data, outputEncoding) {
@@ -942,7 +938,7 @@
             // ensure no unwanted stuffing spaces
             data = (data || '').replace(/\s/g, '');
 
-            outputEncoding = (outputEncoding || 'arraybuffer').toLowerCase().trim();
+            outputEncoding = (outputEncoding || 'buffer').toLowerCase().trim();
 
             var binStr, i, len, buf;
 
@@ -953,7 +949,7 @@
             } else {
                 binStr = atob(data);
                 len = binStr.length;
-                buf = new Uint8Array(new ArrayBuffer(len));
+                buf = new Uint8Array(len);
                 for (i = 0; i < len; i++) {
                     buf[i] = binStr.charCodeAt(i);
                 }
@@ -961,22 +957,6 @@
             }
         }
     };
-
-    //
-    // Helper Function
-    //
-
-    // Apparently, some browsers can't handle String.fromCharCode.apply
-    // https://github.com/ariya/phantomjs/issues/11172
-    function arr2str(arr) {
-        var i, l, str = '';
-
-        for (i = 0, l = arr.length; i < l; i++) {
-            str += String.fromCharCode(arr[i]);
-        }
-
-        return str;
-    }
 
     return mimefuncs;
 }));
