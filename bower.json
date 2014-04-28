@@ -1,7 +1,7 @@
 {
     "name": "mimefuncs",
     "description": "Encode and decode quoted printable and base64 strings",
-    "version": "0.2.1",
+    "version": "0.3.0",
     "main": "src/mimefuncs.js",
     "homepage": "https://github.com/whiteout-io/mimefuncs",
     "repository": {

@@ -16,15 +16,15 @@ This module requires `TextEncoder` and `TextDecoder` to exist as part of the Str
 
 Install with [volo](http://volojs.org/):
 
-    volo add whiteout-io/mimefuncs/v0.2.1
+    volo add whiteout-io/mimefuncs/v0.3.0
 
 ### [Bower](http://bower.io/):
 
-    bower install git@github.com:whiteout-io/mimefuncs.git#v0.2.1
+    bower install git@github.com:whiteout-io/mimefuncs.git#v0.3.0
 
 ### [npm](https://www.npmjs.org/):
 
-    npm install https://github.com/whiteout-io/mimefuncs/tarball/v0.2.1
+    npm install https://github.com/whiteout-io/mimefuncs/tarball/v0.3.0
 
 ## Usage
 
