@@ -488,9 +488,9 @@
          */
         parseHeaderValue: function(str) {
             var response = {
-                value: false,
-                params: {}
-            },
+                    value: false,
+                    params: {}
+                },
                 key = false,
                 value = '',
                 type = 'value',
@@ -608,6 +608,132 @@
             }.bind(this));
 
             return response;
+        },
+
+        /**
+         * Encodes a string or an Uint8Array to an UTF-8 Parameter Value Continuation encoding (rfc2231)
+         * Useful for splitting long parameter values.
+         *
+         * For example
+         *      title="unicode string"
+         * becomes
+         *     title*0*="utf-8''unicode"
+         *     title*1*="%20string"
+         *
+         * @param {String|Uint8Array} data String to be encoded
+         * @param {Number} [maxLength=50] Max length for generated chunks
+         * @param {String} [fromCharset='UTF-8'] Source sharacter set
+         * @return {Array} A list of encoded keys and headers
+         */
+        continuationEncode: function(key, data, maxLength, fromCharset) {
+            var list = [];
+            var encodedStr = typeof data === 'string' ? data : mimefuncs.decode(data, fromCharset);
+            var chr;
+            var line;
+            var startPos = 0;
+            var isEncoded = false;
+
+            maxLength = maxLength || 50;
+
+            // process ascii only text
+            if (/^[\w.\- ]*$/.test(data)) {
+
+                // check if conversion is even needed
+                if (encodedStr.length <= maxLength) {
+                    return [{
+                        key: key,
+                        value: encodedStr
+                    }];
+                }
+
+                encodedStr = encodedStr.replace(new RegExp('.{' + maxLength + '}', 'g'), function(str) {
+                    list.push({
+                        line: str
+                    });
+                    return '';
+                });
+
+                if (encodedStr) {
+                    list.push({
+                        line: encodedStr
+                    });
+                }
+
+            } else {
+
+                // first line includes the charset and language info and needs to be encoded
+                // even if it does not contain any unicode characters
+                line = 'utf-8\'\'';
+                isEncoded = true;
+                startPos = 0;
+                // process text with unicode or special chars
+                for (var i = 0, len = encodedStr.length; i < len; i++) {
+
+                    chr = encodedStr[i];
+
+                    if (isEncoded) {
+                        chr = encodeURIComponent(chr);
+                    } else {
+                        // try to urlencode current char
+                        chr = chr === ' ' ? chr : encodeURIComponent(chr);
+                        // By default it is not required to encode a line, the need
+                        // only appears when the string contains unicode or special chars
+                        // in this case we start processing the line over and encode all chars
+                        if (chr !== encodedStr[i]) {
+                            // Check if it is even possible to add the encoded char to the line
+                            // If not, there is no reason to use this line, just push it to the list
+                            // and start a new line with the char that needs encoding
+                            if ((encodeURIComponent(line) + chr).length >= maxLength) {
+                                list.push({
+                                    line: line,
+                                    encoded: isEncoded
+                                });
+                                line = '';
+                                startPos = i - 1;
+                            } else {
+                                isEncoded = true;
+                                i = startPos;
+                                line = '';
+                                continue;
+                            }
+                        }
+                    }
+
+                    // if the line is already too long, push it to the list and start a new one
+                    if ((line + chr).length >= maxLength) {
+                        list.push({
+                            line: line,
+                            encoded: isEncoded
+                        });
+                        line = chr = encodedStr[i] === ' ' ? ' ' : encodeURIComponent(encodedStr[i]);
+                        if (chr === encodedStr[i]) {
+                            isEncoded = false;
+                            startPos = i - 1;
+                        } else {
+                            isEncoded = true;
+                        }
+                    } else {
+                        line += chr;
+                    }
+                }
+
+                if (line) {
+                    list.push({
+                        line: line,
+                        encoded: isEncoded
+                    });
+                }
+            }
+
+            return list.map(function(item, i) {
+                return {
+                    // encoded lines: {name}*{part}*
+                    // unencoded lines: {name}*{part}
+                    // if any line needs to be encoded then the first line (part==0) is always encoded
+                    key: key + '*' + i + (item.encoded ? '*' : ''),
+                    value: item.line
+                };
+            });
         },
 
         /**

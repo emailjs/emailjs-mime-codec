@@ -98,6 +98,36 @@ will become
 
     See on õhin test
 
+### continuationEncode
+
+Encodes and splits a header param value according to [RFC2231](https://tools.ietf.org/html/rfc2231#section-3) Parameter Value Continuations.
+
+    mimefuncs.continuationEncode(key, str, maxLength [, fromCharset]) -> Array
+
+  * **key** - Parameter key (eg. `filename`)
+  * **str** - String or an Uint8Array value to encode
+  * **maxLength** - Maximum length of the encoded string part (not line length). Defaults to 50
+  * **fromCharset** - If `str` is a typed array, use this charset to decode the value to unicode before encoding
+
+The method returns an array of encoded parts with the following structure: `[{key:'...', value: '...'}]`
+
+#### Example
+
+```
+mimefuncs.continuationEncode('filename', 'filename õäöü.txt', 20);
+->
+[ { key: 'filename*0*', value: 'utf-8\'\'filename%20' },
+  { key: 'filename*1*', value: '%C3%B5%C3%A4%C3%B6' },
+  { key: 'filename*2*', value: '%C3%BC.txt' } ]
+```
+
+This can be combined into a properly formatted header:
+
+```
+Content-disposition: attachment; filename*0*="utf-8''filename%20"
+  filename*1*="%C3%B5%C3%A4%C3%B6"; filename*2*="%C3%BC.txt"
+```
+
 ### quotedPrintableEncode
 
 Encodes a string into Quoted-printable format (see also `quotedPrintableDecode`). Maximum line
