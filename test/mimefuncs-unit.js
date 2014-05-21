@@ -90,8 +90,8 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
             it('should add soft line breaks', function() {
                 var str = 'õäöüõäöüõäöüõäöüõäöüõäöüõäöõ',
                     encodedStr = '=C3=B5=C3=A4=C3=B6=C3=BC=C3=B5=C3=A4=C3=B6=C3=BC=C3=B5=C3=A4=C3=B6=C3=BC=\r\n' +
-                        '=C3=B5=C3=A4=C3=B6=C3=BC=C3=B5=C3=A4=C3=B6=C3=BC=C3=B5=C3=A4=C3=B6=C3=BC=\r\n' +
-                        '=C3=B5=C3=A4=C3=B6=C3=B5';
+                    '=C3=B5=C3=A4=C3=B6=C3=BC=C3=B5=C3=A4=C3=B6=C3=BC=C3=B5=C3=A4=C3=B6=C3=BC=\r\n' +
+                    '=C3=B5=C3=A4=C3=B6=C3=B5';
 
                 expect(mimefuncs.quotedPrintableEncode(str)).to.equal(encodedStr);
             });
@@ -114,9 +114,9 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
                     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
                     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
                     longLineEncoded = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLM=\r\n' +
-                        'NOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ=\r\n' +
-                        'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklm=\r\n' +
-                        'nopqrstuvwxyz0123456789';
+                    'NOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ=\r\n' +
+                    'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklm=\r\n' +
+                    'nopqrstuvwxyz0123456789';
 
                 expect(longLineEncoded).to.equal(mimefuncs.quotedPrintableEncode(longLine));
             });
@@ -133,9 +133,9 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
                     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
                     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
                     longLineEncoded = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHI=\r\n' +
-                        '=C3=84=C3=84=C3=84PQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJ=\r\n' +
-                        'KLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVW=\r\n' +
-                        'XYZabcdefghijklmnopqrstuvwxyz0123456789';
+                    '=C3=84=C3=84=C3=84PQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJ=\r\n' +
+                    'KLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVW=\r\n' +
+                    'XYZabcdefghijklmnopqrstuvwxyz0123456789';
                 expect(longLineEncoded).to.equal(mimefuncs.quotedPrintableEncode(longLine));
             });
 
@@ -159,9 +159,9 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
                     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
                     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
                     longLineEncoded = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHI=\r\n' +
-                        '=C3=84=C3=84=C3=84PQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJ=\r\n' +
-                        'KLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVW=\r\n' +
-                        'XYZabcdefghijklmnopqrstuvwxyz0123456789';
+                    '=C3=84=C3=84=C3=84PQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJ=\r\n' +
+                    'KLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVW=\r\n' +
+                    'XYZabcdefghijklmnopqrstuvwxyz0123456789';
 
                 expect(longLine).to.equal(mimefuncs.quotedPrintableDecode(longLineEncoded));
             });
@@ -229,8 +229,8 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
             it('should split QP on maxLength', function() {
                 var inputStr = 'Jõgeva Jõgeva Jõgeva mugeva Jõgeva Jõgeva Jõgeva Jõgeva Jõgeva',
                     outputStr = '=?UTF-8?Q?J=C3=B5geva_?= =?UTF-8?Q?J=C3=B5geva_?= =?UTF-8?Q?J=C3=B5geva?= mugeva ' +
-                        '=?UTF-8?Q?J=C3=B5geva_?= =?UTF-8?Q?J=C3=B5geva_?= =?UTF-8?Q?J=C3=B5geva_?= ' +
-                        '=?UTF-8?Q?J=C3=B5geva_?= =?UTF-8?Q?J=C3=B5geva?=',
+                    '=?UTF-8?Q?J=C3=B5geva_?= =?UTF-8?Q?J=C3=B5geva_?= =?UTF-8?Q?J=C3=B5geva_?= ' +
+                    '=?UTF-8?Q?J=C3=B5geva_?= =?UTF-8?Q?J=C3=B5geva?=',
                     encoded = mimefuncs.mimeWordsEncode(inputStr, 'Q', 16);
 
                 expect(outputStr).to.equal(encoded);
@@ -240,10 +240,10 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
             it('should split base64 on maxLength', function() {
                 var inputStr = 'Jõgeva Jõgeva Jõgeva mugeva Jõgeva Jõgeva Jõgeva Jõgeva Jõgeva',
                     outputStr = '=?UTF-8?B?SsO1Zw==?= =?UTF-8?B?ZXZh?= =?UTF-8?B?IErDtQ==?= =?UTF-8?B?Z2V2?= ' +
-                        '=?UTF-8?B?YSBK?= =?UTF-8?B?w7VnZQ==?= =?UTF-8?B?dmE=?= mugeva =?UTF-8?B?SsO1Zw==?= ' +
-                        '=?UTF-8?B?ZXZh?= =?UTF-8?B?IErDtQ==?= =?UTF-8?B?Z2V2?= =?UTF-8?B?YSBK?= ' +
-                        '=?UTF-8?B?w7VnZQ==?= =?UTF-8?B?dmEg?= =?UTF-8?B?SsO1Zw==?= =?UTF-8?B?ZXZh?= ' +
-                        '=?UTF-8?B?IErDtQ==?= =?UTF-8?B?Z2V2?= =?UTF-8?B?YQ==?=',
+                    '=?UTF-8?B?YSBK?= =?UTF-8?B?w7VnZQ==?= =?UTF-8?B?dmE=?= mugeva =?UTF-8?B?SsO1Zw==?= ' +
+                    '=?UTF-8?B?ZXZh?= =?UTF-8?B?IErDtQ==?= =?UTF-8?B?Z2V2?= =?UTF-8?B?YSBK?= ' +
+                    '=?UTF-8?B?w7VnZQ==?= =?UTF-8?B?dmEg?= =?UTF-8?B?SsO1Zw==?= =?UTF-8?B?ZXZh?= ' +
+                    '=?UTF-8?B?IErDtQ==?= =?UTF-8?B?Z2V2?= =?UTF-8?B?YQ==?=',
                     encoded = mimefuncs.mimeWordsEncode(inputStr, 'B', 19);
 
                 expect(outputStr).to.equal(encoded);
@@ -255,13 +255,63 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
             });
         });
 
+        describe('#continuationEncode', function() {
+            it('should return unmodified', function() {
+                expect([{
+                    key: 'title',
+                    value: 'this is just a title'
+                }]).to.deep.equal(mimefuncs.continuationEncode('title', 'this is just a title', 500));
+            });
+
+            it('should encode and split ascii', function() {
+                expect([{
+                    key: 'title*0',
+                    value: 'this '
+                }, {
+                    key: 'title*1',
+                    value: 'is ju'
+                }, {
+                    key: 'title*2',
+                    value: 'st a '
+                }, {
+                    key: 'title*3',
+                    value: 'title'
+                }]).to.deep.equal(mimefuncs.continuationEncode('title', 'this is just a title', 5));
+            });
+
+            it('should encode and split unicode', function() {
+                expect([{
+                    key: 'title*0*',
+                    value: 'utf-8\'\'this%20is%20'
+                }, {
+                    key: 'title*1',
+                    value: 'just a title '
+                }, {
+                    key: 'title*2*',
+                    value: '%C3%B5%C3%A4%C3%B6'
+                }, {
+                    key: 'title*3*',
+                    value: '%C3%BC'
+                }]).to.deep.equal(mimefuncs.continuationEncode('title', 'this is just a title õäöü', 20));
+            });
+
+            it('should encode and decode', function() {
+                var input = 'Lorěm ipsum doloř siť amet, háš peřpetua compřéhenšam at, ei nám modó soleát éxpétěndá! Boňorum vocibůs dignisšim pro ad, ea sensibus efficiendi intellegam ius. Ad nam aperiam delicata voluptaria, vix nobis luptatum ea, ců úsú graeco viďiššě ňusqúam. ';
+                var headerLine = 'content-disposition: attachment; ' + mimefuncs.continuationEncode('filename', input, 50).map(function(item) {
+                    return item.key + '="' + item.value + '"';
+                }).join('; ');
+                var parsedHeader = mimefuncs.parseHeaderValue(headerLine);
+                expect(input).to.equal(mimefuncs.mimeWordsDecode(parsedHeader.params.filename));
+            });
+        });
+
         describe('#foldLines', function() {
             it('should Fold long header line', function() {
                 var inputStr = 'Subject: Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas jušla kušla tušla musla',
                     outputStr = 'Subject: Testin command line kirja =?UTF-8?Q?=C3=B5kva?= kakva\r\n' +
-                        ' =?UTF-8?Q?m=C3=B5ni_t=C3=B5nis_k=C3=B5llas_p=C3=B5?=\r\n' +
-                        ' =?UTF-8?Q?llas_t=C3=B5llas_r=C3=B5llas_ju=C5=A1la_?=\r\n' +
-                        ' =?UTF-8?Q?ku=C5=A1la_tu=C5=A1la?= musla',
+                    ' =?UTF-8?Q?m=C3=B5ni_t=C3=B5nis_k=C3=B5llas_p=C3=B5?=\r\n' +
+                    ' =?UTF-8?Q?llas_t=C3=B5llas_r=C3=B5llas_ju=C5=A1la_?=\r\n' +
+                    ' =?UTF-8?Q?ku=C5=A1la_tu=C5=A1la?= musla',
                     encodedHeaderLine = mimefuncs.mimeWordsEncode(inputStr, 'Q', 52);
 
                 expect(outputStr).to.equal(mimefuncs.foldLines(encodedHeaderLine, 76));
@@ -270,8 +320,8 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
             it('should Fold flowed text', function() {
                 var inputStr = 'Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas jušla kušla tušla musla Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas jušla kušla tušla musla',
                     outputStr = 'Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas \r\n' +
-                        'jušla kušla tušla musla Testin command line kirja õkva kakva mõni tõnis \r\n' +
-                        'kõllas põllas tõllas rõllas jušla kušla tušla musla';
+                    'jušla kušla tušla musla Testin command line kirja õkva kakva mõni tõnis \r\n' +
+                    'kõllas põllas tõllas rõllas jušla kušla tušla musla';
 
                 expect(outputStr).to.equal(mimefuncs.foldLines(inputStr, 76, true));
             });
@@ -289,9 +339,9 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
                 var key = 'Subject',
                     value = 'Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas jušla kušla tušla musla',
                     outputStr = 'Subject: Testin command line kirja =?UTF-8?Q?=C3=B5kva?= kakva\r\n' +
-                        ' =?UTF-8?Q?m=C3=B5ni_t=C3=B5nis_k=C3=B5llas_p=C3=B5?=\r\n' +
-                        ' =?UTF-8?Q?llas_t=C3=B5llas_r=C3=B5llas_ju=C5=A1la_?=\r\n' +
-                        ' =?UTF-8?Q?ku=C5=A1la_tu=C5=A1la?= musla',
+                    ' =?UTF-8?Q?m=C3=B5ni_t=C3=B5nis_k=C3=B5llas_p=C3=B5?=\r\n' +
+                    ' =?UTF-8?Q?llas_t=C3=B5llas_r=C3=B5llas_ju=C5=A1la_?=\r\n' +
+                    ' =?UTF-8?Q?ku=C5=A1la_tu=C5=A1la?= musla',
                     encodedHeaderLine = mimefuncs.headerLineEncode(key, value);
 
                 expect(outputStr).to.equal(encodedHeaderLine);
@@ -301,16 +351,16 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
         describe('#headerLinesDecode', function() {
             it('should decode headers', function() {
                 var headersObj = {
-                    'subject': 'Tere =?UTF-8?Q?J=C3=B5geva?=',
-                    'x-app': ['My =?UTF-8?Q?=C5=A1=C5=A1=C5=A1=C5=A1?= app line 1', 'My =?UTF-8?Q?=C5=A1=C5=A1=C5=A1=C5=A1?= app line 2'],
-                    'long-line': 'tere =?UTF-8?Q?=C3=B5klva?= karu =?UTF-8?Q?m=C3=B5kva_=C5=A1apaka=C5=A1?= tutikas suur maja, =?UTF-8?Q?k=C3=B5rge?= hoone, segane jutt'
-                },
+                        'subject': 'Tere =?UTF-8?Q?J=C3=B5geva?=',
+                        'x-app': ['My =?UTF-8?Q?=C5=A1=C5=A1=C5=A1=C5=A1?= app line 1', 'My =?UTF-8?Q?=C5=A1=C5=A1=C5=A1=C5=A1?= app line 2'],
+                        'long-line': 'tere =?UTF-8?Q?=C3=B5klva?= karu =?UTF-8?Q?m=C3=B5kva_=C5=A1apaka=C5=A1?= tutikas suur maja, =?UTF-8?Q?k=C3=B5rge?= hoone, segane jutt'
+                    },
                     headersStr = 'Subject: Tere =?UTF-8?Q?J=C3=B5geva?=\r\n' +
-                        'X-APP: My =?UTF-8?Q?=C5=A1=C5=A1=C5=A1=C5=A1?= app line 1\r\n' +
-                        'X-APP: My =?UTF-8?Q?=C5=A1=C5=A1=C5=A1=C5=A1?= app line 2\r\n' +
-                        'Long-Line: tere =?UTF-8?Q?=C3=B5klva?= karu\r\n' +
-                        ' =?UTF-8?Q?m=C3=B5kva_=C5=A1apaka=C5=A1?= tutikas suur maja,\r\n' +
-                        ' =?UTF-8?Q?k=C3=B5rge?= hoone, segane jutt';
+                    'X-APP: My =?UTF-8?Q?=C5=A1=C5=A1=C5=A1=C5=A1?= app line 1\r\n' +
+                    'X-APP: My =?UTF-8?Q?=C5=A1=C5=A1=C5=A1=C5=A1?= app line 2\r\n' +
+                    'Long-Line: tere =?UTF-8?Q?=C3=B5klva?= karu\r\n' +
+                    ' =?UTF-8?Q?m=C3=B5kva_=C5=A1apaka=C5=A1?= tutikas suur maja,\r\n' +
+                    ' =?UTF-8?Q?k=C3=B5rge?= hoone, segane jutt';
 
                 expect(headersObj).to.deep.equal(mimefuncs.headerLinesDecode(headersStr));
             });
