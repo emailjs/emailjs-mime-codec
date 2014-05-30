@@ -498,6 +498,13 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
 
                     expect(str).to.equal(mimefuncs.base64.decode(b64, 'string'));
                 });
+
+                it('should convert base64 with invalid symbols to UTF-8 string', function() {
+                    var str = 'abc123ÕÄÖÜŠŽ신',
+                        b64 = 'õYüWŠJŽj M\rT\t\nI$zw5XDhMOWw5\bzFoMW\ud83d\udca997Iug';
+
+                    expect(str).to.equal(mimefuncs.base64.decode(b64, 'string'));
+                });
             });
         });
 
