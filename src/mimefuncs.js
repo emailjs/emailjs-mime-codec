@@ -23,21 +23,18 @@
 
     if (typeof define === 'function' && define.amd) {
         define(['stringencoding'], function(encoding) {
-            return factory(encoding.TextEncoder, encoding.TextDecoder, root.btoa, root.atob);
+            return factory(encoding.TextEncoder, encoding.TextDecoder, root.btoa);
         });
     } else if (typeof exports === 'object') {
         var encoding = require('stringencoding'),
             btoaShim = function(str) {
                 return new Buffer(str, 'binary').toString("base64");
-            },
-            atobShim = function(str) {
-                return new Buffer(str, 'base64').toString('binary');
             };
-        module.exports = factory(encoding.TextEncoder, encoding.TextDecoder, btoaShim, atobShim);
+        module.exports = factory(encoding.TextEncoder, encoding.TextDecoder, btoaShim);
     } else {
-        root.mimefuncs = factory(root.TextEncoder, root.TextDecoder, root.btoa, root.atob);
+        root.mimefuncs = factory(root.TextEncoder, root.TextDecoder, root.btoa);
     }
-}(this, function(TextEncoder, TextDecoder, btoa, atob) {
+}(this, function(TextEncoder, TextDecoder, btoa) {
     'use strict';
 
     var mimefuncs = {
@@ -1053,34 +1050,76 @@
         /**
          * Decodes base64 encoded string into an unicode string or Uint8Array
          *
-         * NB! Throws on invalid sequence. Spaces are allowed.
-         *
          * @param {String} data Base64 encoded data
          * @param {String} [outputEncoding='buffer'] Output encoding, either 'string' or 'buffer' (Uint8Array)
          * @return {String|Uint8Array} Decoded string
          */
         decode: function(data, outputEncoding) {
-
-            // ensure no unwanted stuffing spaces
-            data = (data || '').replace(/\s/g, '');
-
             outputEncoding = (outputEncoding || 'buffer').toLowerCase().trim();
 
-            var binStr, i, len, buf;
+            var buf = mimefuncs.base64.toTypedArray(data);
 
             if (outputEncoding === 'string') {
-                // atob uses pseudo binary encoding, so unicode strings
-                // need to be converted after decoding
-                return decodeURIComponent(escape(atob(data)));
+                return mimefuncs.charset.decode(buf);
             } else {
-                binStr = atob(data);
-                len = binStr.length;
-                buf = new Uint8Array(len);
-                for (i = 0; i < len; i++) {
-                    buf[i] = binStr.charCodeAt(i);
-                }
                 return buf;
             }
+        },
+
+        /**
+         * Safe base64 decoding. Does not throw on unexpected input.
+         *
+         * Implementation from the MDN docs:
+         * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Base64_encoding_and_decoding
+         * (MDN code samples are MIT licensed)
+         *
+         * @param {String} base64Str Base64 encoded string
+         * @returns {Uint8Array} Decoded binary blob
+         */
+        toTypedArray: function(base64Str) {
+            var bitsSoFar = 0;
+            var validBits = 0;
+            var iOut = 0;
+            var arr = new Uint8Array(Math.ceil(base64Str.length * 3 / 4));
+            var c;
+            var bits;
+
+            for (var i = 0, len = base64Str.length; i < len; i++) {
+                c = base64Str.charCodeAt(i);
+                if (c >= 0x41 && c <= 0x5a) { // [A-Z]
+                    bits = c - 0x41;
+                } else if (c >= 0x61 && c <= 0x7a) { // [a-z]
+                    bits = c - 0x61 + 0x1a;
+                } else if (c >= 0x30 && c <= 0x39) { // [0-9]
+                    bits = c - 0x30 + 0x34;
+                } else if (c === 0x2b) { // +
+                    bits = 0x3e;
+                } else if (c === 0x2f) { // /
+                    bits = 0x3f;
+                } else if (c === 0x3d) { // =
+                    validBits = 0;
+                    continue;
+                } else {
+                    // ignore all other characters!
+                    continue;
+                }
+                bitsSoFar = (bitsSoFar << 6) | bits;
+                validBits += 6;
+                if (validBits >= 8) {
+                    validBits -= 8;
+                    arr[iOut++] = bitsSoFar >> validBits;
+                    if (validBits === 2) {
+                        bitsSoFar &= 0x03;
+                    } else if (validBits === 4) {
+                        bitsSoFar &= 0x0f;
+                    }
+                }
+            }
+
+            if (iOut < arr.length) {
+                return arr.subarray(0, iOut);
+            }
+            return arr;
         }
     };
 
