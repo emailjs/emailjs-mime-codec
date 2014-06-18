@@ -18,6 +18,13 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
                 expect(mimefuncs.mimeEncode(str)).to.equal(encodedStr);
             });
 
+            it('shoud encode trailing whitespace', function() {
+                var str = 'tere  ',
+                    encodedStr = 'tere =20';
+
+                expect(mimefuncs.mimeEncode(str)).to.equal(encodedStr);
+            });
+
             it('shoud encode non UTF-8', function() {
                 var buf = new Uint8Array([0xBD, 0xC5]),
                     encoding = 'ks_c_5601-1987',
@@ -82,7 +89,7 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
         describe('#quotedPrintableEncode', function() {
             it('should encode UTF-8 to quoted-printable', function() {
                 var str = 'tere ÕÄ \t\nÕÄ \t\nÖÕ',
-                    encodedStr = 'tere =C3=95=C3=84=20=09\r\n=C3=95=C3=84=20=09\r\n=C3=96=C3=95';
+                    encodedStr = 'tere =C3=95=C3=84 =09\r\n=C3=95=C3=84 =09\r\n=C3=96=C3=95';
 
                 expect(mimefuncs.quotedPrintableEncode(str)).to.equal(encodedStr);
             });

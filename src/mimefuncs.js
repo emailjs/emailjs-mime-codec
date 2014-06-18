@@ -62,14 +62,17 @@
                     [0x40, 0x5E],
                     [0x60, 0x7E]
                 ],
-                result = '';
+                result = '',
+                ord;
 
             for (var i = 0, len = buffer.length; i < len; i++) {
-                if (mimefuncs._checkRanges(buffer[i], ranges)) {
-                    result += String.fromCharCode(buffer[i]);
+                ord = buffer[i];
+                // if the char is in allowed range, then keep as is, unless it is a ws in the end of a line
+                if (mimefuncs._checkRanges(ord, ranges) && !((ord === 0x20 || ord === 0x09) && (i === len - 1 || buffer[i + 1] === 0x0a || buffer[i + 1] === 0x0d))) {
+                    result += String.fromCharCode(ord);
                     continue;
                 }
-                result += '=' + (buffer[i] < 0x10 ? '0' : '') + buffer[i].toString(16).toUpperCase();
+                result += '=' + (ord < 0x10 ? '0' : '') + ord.toString(16).toUpperCase();
             }
 
             return result;
@@ -84,6 +87,7 @@
          */
         mimeDecode: function(str, fromCharset) {
             str = (str || '').toString();
+
             fromCharset = fromCharset || 'UTF-8';
 
             var encodedBytesCount = (str.match(/\=[\da-fA-F]{2}/g) || []).length,
@@ -173,8 +177,12 @@
         quotedPrintableDecode: function(str, fromCharset) {
             str = (str || '').toString();
 
+            str = str.
+            // remove invalid whitespace from the end of lines
+            replace(/[\t ]+$/gm, '').
             // remove soft line breaks
-            str = str.replace(/\=(?:\r?\n|$)/g, '');
+            replace(/\=(?:\r?\n|$)/g, '');
+
             return mimefuncs.mimeDecode(str, fromCharset);
         },
 
@@ -824,6 +832,8 @@
         _addQPSoftLinebreaks: function(qpEncodedStr, lineLengthMax) {
             qpEncodedStr = (qpEncodedStr || '').toString();
 
+            lineLengthMax = lineLengthMax || 76;
+
             var pos = 0,
                 len = qpEncodedStr.length,
                 match, code, line,
@@ -882,9 +892,9 @@
                 }
 
                 if (pos + line.length < len && line.substr(-1) !== '\n') {
-                    if (line.length === 76 && line.match(/\=[\da-f]{2}$/i)) {
+                    if (line.length === lineLengthMax && line.match(/\=[\da-f]{2}$/i)) {
                         line = line.substr(0, line.length - 3);
-                    } else if (line.length === 76) {
+                    } else if (line.length === lineLengthMax) {
                         line = line.substr(0, line.length - 1);
                     }
                     pos += line.length;
