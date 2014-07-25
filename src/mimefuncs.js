@@ -22,11 +22,11 @@
     'use strict';
 
     if (typeof define === 'function' && define.amd) {
-        define(['stringencoding'], function(encoding) {
+        define(['wo-stringencoding'], function(encoding) {
             return factory(encoding.TextEncoder, encoding.TextDecoder, root.btoa);
         });
     } else if (typeof exports === 'object') {
-        var encoding = require('stringencoding'),
+        var encoding = require('wo-stringencoding'),
             btoaShim = function(str) {
                 return new Buffer(str, 'binary').toString("base64");
             };

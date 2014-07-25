@@ -12,13 +12,9 @@ This module requires `TextEncoder` and `TextDecoder` to exist as part of the Str
 
 ## Installation
 
-### [Bower](http://bower.io/):
-
-    bower install git@github.com:whiteout-io/mimefuncs.git#<TAG NAME>
-
 ### [npm](https://www.npmjs.org/):
 
-    npm install https://github.com/whiteout-io/mimefuncs/tarball/<TAG NAME>
+    npm install --save mimefuncs
 
 ## Usage
 

@@ -5,7 +5,7 @@ require.config({
     paths: {
         'test': '../test',
         'chai': '../node_modules/chai/chai',
-        'stringencoding': '../node_modules/stringencoding/dist/stringencoding'
+        'wo-stringencoding': '../node_modules/wo-stringencoding/dist/stringencoding'
     }
 });
 

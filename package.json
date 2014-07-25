@@ -1,7 +1,7 @@
 {
     "name": "mimefuncs",
     "description": "Encode and decode quoted printable and base64 strings",
-    "version": "0.3.3",
+    "version": "0.3.4",
     "main": "src/mimefuncs",
     "homepage": "https://github.com/whiteout-io/mimefuncs",
     "repository": {
@@ -19,7 +19,7 @@
         "test": "grunt"
     },
     "dependencies": {
-        "stringencoding": "https://github.com/whiteout-io/stringencoding/tarball/v0.1.0"
+        "wo-stringencoding": "~0.1.1"
     },
     "devDependencies": {
         "chai": "~1.8.1",
