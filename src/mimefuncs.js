@@ -22,7 +22,7 @@
     'use strict';
 
     if (typeof define === 'function' && define.amd) {
-        define(['wo-stringencoding'], function(encoding) {
+        define(['stringencoding'], function(encoding) {
             return factory(encoding.TextEncoder, encoding.TextDecoder, root.btoa);
         });
     } else if (typeof exports === 'object') {
