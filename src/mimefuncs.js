@@ -647,7 +647,7 @@
                 if (encodedStr.length <= maxLength) {
                     return [{
                         key: key,
-                        value: encodedStr
+                        value: /[\s";=]/.test(encodedStr) ? '"' + encodedStr + '"' : encodedStr
                     }];
                 }
 
@@ -736,7 +736,7 @@
                     // unencoded lines: {name}*{part}
                     // if any line needs to be encoded then the first line (part==0) is always encoded
                     key: key + '*' + i + (item.encoded ? '*' : ''),
-                    value: item.line
+                    value: /[\s";=]/.test(item.line) ? '"' + item.line + '"' : item.line
                 };
             });
         },

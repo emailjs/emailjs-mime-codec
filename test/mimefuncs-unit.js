@@ -263,23 +263,23 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
         });
 
         describe('#continuationEncode', function() {
-            it('should return unmodified', function() {
+            it('should return quoted', function() {
                 expect([{
                     key: 'title',
-                    value: 'this is just a title'
+                    value: '"this is just a title"'
                 }]).to.deep.equal(mimefuncs.continuationEncode('title', 'this is just a title', 500));
             });
 
             it('should encode and split ascii', function() {
                 expect([{
                     key: 'title*0',
-                    value: 'this '
+                    value: '"this "'
                 }, {
                     key: 'title*1',
-                    value: 'is ju'
+                    value: '"is ju"'
                 }, {
                     key: 'title*2',
-                    value: 'st a '
+                    value: '"st a "'
                 }, {
                     key: 'title*3',
                     value: 'title'
@@ -292,7 +292,7 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
                     value: 'utf-8\'\'this%20is%20'
                 }, {
                     key: 'title*1',
-                    value: 'just a title '
+                    value: '"just a title "'
                 }, {
                     key: 'title*2*',
                     value: '%C3%B5%C3%A4%C3%B6'
