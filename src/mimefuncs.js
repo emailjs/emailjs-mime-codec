@@ -20,18 +20,26 @@
 
 (function(root, factory) {
     'use strict';
+    var encoding;
 
     if (typeof define === 'function' && define.amd) {
+        // amd for browser
         define(['stringencoding'], function(encoding) {
             return factory(encoding.TextEncoder, encoding.TextDecoder, root.btoa);
         });
+    } else if (typeof exports === 'object' && typeof navigator !== 'undefined') {
+        // common.js for browser
+        encoding = require('wo-stringencoding');
+        module.exports = factory(encoding.TextEncoder, encoding.TextDecoder, root.btoa);
     } else if (typeof exports === 'object') {
-        var encoding = require('wo-stringencoding'),
-            btoaShim = function(str) {
-                return new Buffer(str, 'binary').toString("base64");
-            };
-        module.exports = factory(encoding.TextEncoder, encoding.TextDecoder, btoaShim);
+        // common.js for node.js
+        encoding = require('wo-stringencoding');
+        module.exports = factory(encoding.TextEncoder, encoding.TextDecoder, function(str) {
+            var NodeBuffer = require('buffer').Buffer;
+            return new NodeBuffer(str, 'binary').toString("base64");
+        });
     } else {
+        // global for browser
         root.mimefuncs = factory(root.TextEncoder, root.TextDecoder, root.btoa);
     }
 }(this, function(TextEncoder, TextDecoder, btoa) {
