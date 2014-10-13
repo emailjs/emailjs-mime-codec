@@ -25,12 +25,12 @@
     if (typeof define === 'function' && define.amd) {
         // amd for browser
         define(['stringencoding'], function(encoding) {
-            return factory(encoding.TextEncoder, encoding.TextDecoder, root.btoa);
+            return factory(encoding.TextEncoder, encoding.TextDecoder, btoa);
         });
     } else if (typeof exports === 'object' && typeof navigator !== 'undefined') {
         // common.js for browser
         encoding = require('wo-stringencoding');
-        module.exports = factory(encoding.TextEncoder, encoding.TextDecoder, root.btoa);
+        module.exports = factory(encoding.TextEncoder, encoding.TextDecoder, btoa);
     } else if (typeof exports === 'object') {
         // common.js for node.js
         encoding = require('wo-stringencoding');
@@ -40,7 +40,7 @@
         });
     } else {
         // global for browser
-        root.mimefuncs = factory(root.TextEncoder, root.TextDecoder, root.btoa);
+        root.mimefuncs = factory(root.TextEncoder, root.TextDecoder, btoa);
     }
 }(this, function(TextEncoder, TextDecoder, btoa) {
     'use strict';
