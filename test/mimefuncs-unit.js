@@ -540,6 +540,19 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
 
                     expect(str).to.deep.equal(mimefuncs.charset.decode(encoded, encoding));
                 });
+
+                // Note: This is being added as a test to make sure that the
+                // call to fromArray succeeds.  It is possible that the right
+                // course of action is actually to try decoding with a series
+                // of fallback charsets before doing a binary conversion.
+                it('should fall back to binary conversion for illegal charset', function() {
+                    var str = 'a1\x80\xff';
+                    var encoded = [0x61, 0x31, 0x80, 0xff];
+                    // the motivating real-world instance that caused this was
+                    // 'x-unknown'.
+                    var encoding = 'x-illegal';
+                    expect(str).to.deep.equal(mimefuncs.charset.decode(encoded, encoding));
+                });
             });
 
             describe('#convert', function() {
