@@ -166,9 +166,9 @@
             var mimeEncodedStr = mimefuncs.mimeEncode(data, fromCharset);
 
             mimeEncodedStr = mimeEncodedStr.
-            // fix line breaks, ensure <CR><LF>
+                // fix line breaks, ensure <CR><LF>
             replace(/\r?\n|\r/g, '\r\n').
-            // replace spaces in the end of lines
+                // replace spaces in the end of lines
             replace(/[\t ]+$/gm, function(spaces) {
                 return spaces.replace(/ /g, '=20').replace(/\t/g, '=09');
             });
@@ -189,9 +189,9 @@
             str = (str || '').toString();
 
             str = str.
-            // remove invalid whitespace from the end of lines
+                // remove invalid whitespace from the end of lines
             replace(/[\t ]+$/gm, '').
-            // remove soft line breaks
+                // remove soft line breaks
             replace(/\=(?:\r?\n|$)/g, '');
 
             return mimefuncs.mimeDecode(str, fromCharset);
@@ -605,16 +605,16 @@
                             response.params[key].charset +
                             '?Q?' +
                             value.
-                        // fix invalidly encoded chars
+                            // fix invalidly encoded chars
                         replace(/[=\?_\s]/g, function(s) {
-                            var c = s.charCodeAt(0).toString(16);
-                            if (s === ' ') {
-                                return '_';
-                            } else {
-                                return '%' + (c.length < 2 ? '0' : '') + c;
-                            }
-                        }).
-                        // change from urlencoding to percent encoding
+                                var c = s.charCodeAt(0).toString(16);
+                                if (s === ' ') {
+                                    return '_';
+                                } else {
+                                    return '%' + (c.length < 2 ? '0' : '') + c;
+                                }
+                            }).
+                            // change from urlencoding to percent encoding
                         replace(/%/g, '=') +
                             '?=';
                     } else {
@@ -979,7 +979,18 @@
             try {
                 return new TextDecoder(fromCharset).decode(buf);
             } catch (E) {
-                return mimefuncs.fromTypedArray(buf);
+                try {
+                    return new TextDecoder('utf-8', {
+                        fatal: true // if the input is not a valid utf-8 the decoder will throw
+                    }).decode(buf);
+                } catch (E) {
+                    try {
+                        return new TextDecoder('iso-8859-15').decode(buf);
+                    } catch (E) {
+                        // should not happen as there is something matching for every byte (non character bytes are allowed)
+                        return mimefuncs.fromTypedArray(buf);
+                    }
+                }
             }
 
         },
