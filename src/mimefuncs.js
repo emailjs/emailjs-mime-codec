@@ -473,18 +473,19 @@
          * @return {String} 'binary' string
          */
         fromTypedArray: function(buf) {
-            var i, l, str = '';
+            var i, l;
 
             // ensure the value is a Uint8Array, not ArrayBuffer if used
             if (!buf.buffer) {
                 buf = new Uint8Array(buf);
             }
 
+            var sbits = new Array(buf.length);
             for (i = 0, l = buf.length; i < l; i++) {
-                str += String.fromCharCode(buf[i]);
+                sbits[i] = String.fromCharCode(buf[i]);
             }
 
-            return str;
+            return sbits.join('');
         },
 
         /**
