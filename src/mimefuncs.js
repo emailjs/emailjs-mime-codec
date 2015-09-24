@@ -63,15 +63,12 @@
 
             var buffer = mimefuncs.charset.convert(data || '', fromCharset),
                 ranges = [
-                    [0x09],
-                    [0x0A],
-                    [0x0D],
-                    [0x20],
-                    [0x21],
-                    [0x23, 0x3C],
-                    [0x3E],
-                    [0x40, 0x5E],
-                    [0x60, 0x7E]
+                    // https://tools.ietf.org/html/rfc2045#section-6.7
+                    [0x09], // <TAB>
+                    [0x0A], // <LF>
+                    [0x0D], // <CR>
+                    [0x20, 0x3C], // <SP>!"#$%&'()*+,-./0123456789:;
+                    [0x3E, 0x7E] // >?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}
                 ],
                 result = '',
                 ord;
@@ -226,10 +223,15 @@
 
             if (mimeWordEncoding === 'Q') {
                 encodedStr = mimefuncs.mimeEncode(data, fromCharset);
-                encodedStr = encodedStr.replace(/[\r\n\t_]/g, function(chr) {
+                // https://tools.ietf.org/html/rfc2047#section-5 rule (3)
+                encodedStr = encodedStr.replace(/[^a-z0-9!*+\-\/=]/ig, function(chr) {
                     var code = chr.charCodeAt(0);
-                    return '=' + (code < 0x10 ? '0' : '') + code.toString(16).toUpperCase();
-                }).replace(/\s/g, '_');
+                    if(chr === ' '){
+                        return '_';
+                    }else{
+                        return '=' + (code < 0x10 ? '0' : '') + code.toString(16).toUpperCase();
+                    }
+                });
             } else if (mimeWordEncoding === 'B') {
                 encodedStr = typeof data === 'string' ? data : mimefuncs.decode(data, fromCharset);
                 maxLength = Math.max(3, (maxLength - maxLength % 4) / 4 * 3);

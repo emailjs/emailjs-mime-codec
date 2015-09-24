@@ -110,8 +110,8 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
             });
 
             it('should not wrap between encoded chars', function() {
-                var wrapped = 'a__________________________',
-                    wrappedEncoded = 'a=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=\r\n=5F=5F';
+                var wrapped = 'a==========================',
+                    wrappedEncoded = 'a=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=\r\n=3D=3D';
                 expect(wrappedEncoded).to.equal(mimefuncs.quotedPrintableEncode(wrapped));
             });
 
@@ -130,7 +130,7 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
 
             it('should quote at line edge', function() {
                 var str = 'Title: <a href="http://www.elezea.com/2012/09/iphone-5-local-maximum/">The future of e-commerce is storytelling</a> <br>',
-                    strEncoded = 'Title: <a href=3D=22http://www.elezea.com/2012/09/iphone-5-local-maximum/=\r\n=22>The future of e-commerce is storytelling</a> =\r\n<br>';
+                    strEncoded = 'Title: <a href=3D"http://www.elezea.com/2012/09/iphone-5-local-maximum/">Th=\r\ne future of e-commerce is storytelling</a> <br>';
                 expect(strEncoded).to.equal(mimefuncs.quotedPrintableEncode(str));
             });
 
@@ -201,7 +201,7 @@ define(['chai', '../src/mimefuncs'], function(chai, mimefuncs) {
                 var input1 = 'метель" вьюга',
                     input2 = 'метель\'вьюга',
                     output1 = '=?UTF-8?Q?=D0=BC=D0=B5=D1=82=D0=B5=D0=BB=D1=8C=22_?= =?UTF-8?Q?=D0=B2=D1=8C=D1=8E=D0=B3=D0=B0?=',
-                    output2 = '=?UTF-8?Q?=D0=BC=D0=B5=D1=82=D0=B5=D0=BB=D1=8C\'?= =?UTF-8?Q?=D0=B2=D1=8C=D1=8E=D0=B3=D0=B0?=';
+                    output2 = '=?UTF-8?Q?=D0=BC=D0=B5=D1=82=D0=B5=D0=BB=D1=8C=27?= =?UTF-8?Q?=D0=B2=D1=8C=D1=8E=D0=B3=D0=B0?=';
 
                 expect(mimefuncs.mimeWordsEncode(input1, 'Q', 52)).to.equal(output1);
                 expect(mimefuncs.mimeWordsEncode(input2, 'Q', 52)).to.equal(output2);
