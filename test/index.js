@@ -5,12 +5,12 @@ require.config({
     paths: {
         'test': '../test',
         'chai': '../node_modules/chai/chai',
-        'stringencoding': '../node_modules/wo-stringencoding/dist/stringencoding'
+        'emailjs-stringencoding': '../node_modules/emailjs-stringencoding/dist/stringencoding'
     }
 });
 
 
 mocha.setup('bdd');
-require(['test/mimefuncs-unit'], function() {
+require(['test/mimecodec-unit'], function() {
     (window.mochaPhantomJS || window.mocha).run();
 });
