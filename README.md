@@ -27,7 +27,7 @@ Require [mimecodec.js](src/mimecodec.js) as `emailjs-mime-codec`
 Include file [mimecodec.js](src/mimecodec.js) on the page.
 
 ```html
-<script src="mimecodec.js"></script>
+<script src="emailjs-mime-codec.js"></script>
 ```
 
 This exposes global variable `mimecodec`

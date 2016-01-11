@@ -4,7 +4,7 @@ if (typeof define !== 'function') {
     var define = require('amdefine')(module);
 }
 
-define(['chai', '../src/mimecodec'], function(chai, mimecodec) {
+define(['chai', '../src/emailjs-mime-codec'], function(chai, mimecodec) {
 
     var expect = chai.expect;
     chai.Assertion.includeStack = true;

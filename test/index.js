@@ -5,7 +5,7 @@ require.config({
     paths: {
         'test': '../test',
         'chai': '../node_modules/chai/chai',
-        'emailjs-stringencoding': '../node_modules/emailjs-stringencoding/dist/stringencoding'
+        'emailjs-stringencoding': '../node_modules/emailjs-stringencoding/src/emailjs-stringencoding'
     }
 });
 
