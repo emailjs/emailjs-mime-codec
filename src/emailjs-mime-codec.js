@@ -342,7 +342,12 @@
 
             var joinBRegex = /(=\?[^?]+\?[Bb]\?)([^?]+)\?=\1([^?]+)\?=/g;
             str = mimecodec._replaceAll(str, joinBRegex, function(match, header, part1, part2) {
-                var result = mimecodec.base64Encode(mimecodec.base64Decode(part1+part2));
+                var buf1 = mimecodec.base64.decode(part1);
+                var buf2 = mimecodec.base64.decode(part2);
+                var joined = new Uint8Array(buf1.byteLength + buf2.byteLength);
+                joined.set(new Uint8Array(buf1), 0);
+                joined.set(new Uint8Array(buf2), buf1.byteLength);
+                var result = mimecodec.base64.encode(joined);
                 return header + result + '?=';
             });
 
