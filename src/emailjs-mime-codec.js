@@ -1095,7 +1095,7 @@
             }
 
             for (var i = 0; i < len; i++) {
-                binStr += String.fromCharCode(data[i]);
+                binStr += String.fromCharCode(data.buffer[i]);
             }
 
             return btoa(binStr);
