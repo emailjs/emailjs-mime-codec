@@ -233,6 +233,11 @@ define(['chai', '../src/emailjs-mime-codec'], function(chai, mimecodec) {
                 expect(mimecodec.mimeWordsDecode(output2)).to.equal(input2);
             });
 
+            it('should join bytes of multi-byte UTF-8 characters before parsing', function() {
+                expect('GLG: Regulation of Taxi in China - 张一兵').to.equal(mimecodec.mimeWordsDecode("=?utf-8?B?R0xHOiBSZWd1bGF0aW9uIG9mIFRheGkgaW4gQ2hpbmEgLSDl?= =?utf-8?B?vKDkuIDlhbU=?="));
+                expect('***SPAM*** Очки виртуальной реальности').to.equal(mimecodec.mimeWordsDecode("***SPAM*** =?utf-8?B?0J7Rh9C60Lgg0LLQuNGA0YLRg9Cw0LvRjNC90L7QuSDR?=\r\n	=?utf-8?B?gNC10LDQu9GM0L3QvtGB0YLQuA==?="));
+            });
+
             it('should split QP on maxLength', function() {
                 var inputStr = 'Jõgeva Jõgeva Jõgeva mugeva Jõgeva Jõgeva Jõgeva Jõgeva Jõgeva',
                     outputStr = '=?UTF-8?Q?J=C3=B5geva_?= =?UTF-8?Q?J=C3=B5geva_?= =?UTF-8?Q?J=C3=B5geva?= mugeva ' +
