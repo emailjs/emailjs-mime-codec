@@ -1,9 +1,7 @@
 'use strict';
 
 require.config({
-    baseUrl: '../',
     paths: {
-        'test': '../test',
         'chai': '../node_modules/chai/chai',
         'emailjs-stringencoding': '../node_modules/emailjs-stringencoding/src/emailjs-stringencoding'
     }
@@ -11,6 +9,6 @@ require.config({
 
 
 mocha.setup('bdd');
-require(['test/mimecodec-unit'], function() {
-    (window.mochaPhantomJS || window.mocha).run();
+require(['../test/mimecodec-unit.js'], function() {
+    window.mocha.run();
 });
