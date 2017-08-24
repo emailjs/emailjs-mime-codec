@@ -7,7 +7,7 @@ if (typeof define !== 'function') {
 define(['chai', '../src/emailjs-mime-codec'], function(chai, mimecodec) {
 
     var expect = chai.expect;
-    chai.Assertion.includeStack = true;
+    chai.config.includeStack = true;
 
     describe('mimecodec', function() {
         describe('#mimeEncode', function() {
