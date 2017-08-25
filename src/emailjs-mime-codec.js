@@ -333,7 +333,7 @@
             str = str.replace(/\?==\?[uU][tT][fF]-8\?[QqBb]\?/g, ""); // join bytes of multi-byte UTF-8
 
             str = str.replace(/\=\?[\w_\-\*]+\?[QqBb]\?[^\?]+\?\=/g, function(mimeWord) {
-                return mimecodec.mimeWordDecode(mimeWord);
+                return mimecodec.mimeWordDecode(mimeWord.replace(/\s+/g, ''));
             });
 
             return str;
