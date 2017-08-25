@@ -238,6 +238,10 @@ define(['chai', '../src/emailjs-mime-codec'], function(chai, mimecodec) {
                 expect('***SPAM*** Очки виртуальной реальности').to.equal(mimecodec.mimeWordsDecode("***SPAM*** =?utf-8?B?0J7Rh9C60Lgg0LLQuNGA0YLRg9Cw0LvRjNC90L7QuSDR?=\r\n	=?utf-8?B?gNC10LDQu9GM0L3QvtGB0YLQuA==?="));
             });
 
+            it('should correclty parse this ISO-2022-JP encoded string', function() {
+              expect('ATOK Passport お申し込み完了＆ユーザー登録完了（定額利用サービス）').to.equal(mimecodec.mimeWordsDecode("=?ISO-2022-JP?B?QVRPSyBQYXNzcG9ydCAbJEIkKj89JDc5fiRfNDAbKEI=?= =?ISO-2022-JP?B?GyRCTjshdSVmITwlNiE8RVBPPzQwTjsbKEI=?= =?ISO-2022-JP?B?GyRCIUpEajNbTXhNUSU1ITwlUyU5IUsbKEI=?="));
+            });
+
             it('should split QP on maxLength', function() {
                 var inputStr = 'Jõgeva Jõgeva Jõgeva mugeva Jõgeva Jõgeva Jõgeva Jõgeva Jõgeva',
                     outputStr = '=?UTF-8?Q?J=C3=B5geva_?= =?UTF-8?Q?J=C3=B5geva_?= =?UTF-8?Q?J=C3=B5geva?= mugeva ' +
