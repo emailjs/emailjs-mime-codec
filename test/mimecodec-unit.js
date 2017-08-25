@@ -233,9 +233,21 @@ define(['chai', '../src/emailjs-mime-codec'], function(chai, mimecodec) {
                 expect(mimecodec.mimeWordsDecode(output2)).to.equal(input2);
             });
 
-            it('should join bytes of multi-byte UTF-8 characters before parsing', function() {
+            it('should join bytes of Base64 multi-byte UTF-8 characters before parsing', function() {
                 expect('GLG: Regulation of Taxi in China - 张一兵').to.equal(mimecodec.mimeWordsDecode("=?utf-8?B?R0xHOiBSZWd1bGF0aW9uIG9mIFRheGkgaW4gQ2hpbmEgLSDl?= =?utf-8?B?vKDkuIDlhbU=?="));
                 expect('***SPAM*** Очки виртуальной реальности').to.equal(mimecodec.mimeWordsDecode("***SPAM*** =?utf-8?B?0J7Rh9C60Lgg0LLQuNGA0YLRg9Cw0LvRjNC90L7QuSDR?=\r\n	=?utf-8?B?gNC10LDQu9GM0L3QvtGB0YLQuA==?="));
+            });
+
+            it('should join bytes of Quoted-Printable multi-byte UTF-8 characters before parsing', function() {
+                expect('гос (передай кому надо тоже').to.equal(mimecodec.mimeWordsDecode("=?utf-8?Q?=D0=B3=D0=BE=D1=81_?==?utf-8?Q?(=D0=BF=D0=B5=D1=80=D0=B5=D0=B4=D0=B0=D0=B9_=D0=BA=D0=BE=D0?= =?utf-8?Q?=BC=D1=83_=D0=BD=D0=B0=D0=B4=D0=BE_=D1=82=D0=BE=D0=B6=D0=B5?="));
+            });
+
+            it('should decode Quoted-Printable with bad line split', function() {
+                expect('гос (передай кому надо тоже').to.equal(mimecodec.mimeWordsDecode("=?utf-8?Q?=D0=B3=D0=BE=D1=81_?==?utf-8?Q?(=D0=BF=D0=B5=D1=80=D0=B5= D0=B4=D0=B0=D0=B9_=D0=BA=D0=BE=D0?= =?utf-8?Q?=BC=D1=83_=D0=BD=D0=B0=D0=B4=D0=BE_=D1=82=D0=BE=D0=B6=D0=B5?="));
+            });
+
+            it('should correclty parse this ISO-2022-JP encoded string', function() {
+              expect('ATOK Passport お申し込み完了＆ユーザー登録完了（定額利用サービス）').to.equal(mimecodec.mimeWordsDecode("=?ISO-2022-JP?B?QVRPSyBQYXNzcG9ydCAbJEIkKj89JDc5fiRfNDAbKEI=?= =?ISO-2022-JP?B?GyRCTjshdSVmITwlNiE8RVBPPzQwTjsbKEI=?= =?ISO-2022-JP?B?GyRCIUpEajNbTXhNUSU1ITwlUyU5IUsbKEI=?="));
             });
 
             it('should split QP on maxLength', function() {

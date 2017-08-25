@@ -322,15 +322,6 @@
 
         },
 
-        _replaceAll: function(str, regex, by) {
-            var oldStr = null;
-            while (oldStr !== str) {
-                oldStr = str;
-                str = str.replace(regex, by);
-            }
-            return str;
-        },
-
         /**
          * Decode a string that might include one or several mime words
          *
@@ -339,20 +330,10 @@
          */
         mimeWordsDecode: function(str) {
             str = (str || "").toString().replace(/(=\?[^?]+\?[QqBb]\?[^?]+\?=)\s+(?==\?[^?]+\?[QqBb]\?[^?]*\?=)/g, "$1");
+            str = str.replace(/\?==\?[uU][tT][fF]-8\?[QqBb]\?/g, ""); // join bytes of multi-byte UTF-8
 
-            var joinBRegex = /(=\?[^?]+\?[Bb]\?)([^?]+)\?=\1([^?]+)\?=/g;
-            str = mimecodec._replaceAll(str, joinBRegex, function(match, header, part1, part2) {
-                var buf1 = mimecodec.base64.decode(part1);
-                var buf2 = mimecodec.base64.decode(part2);
-                var joined = new Uint8Array(buf1.byteLength + buf2.byteLength);
-                joined.set(new Uint8Array(buf1), 0);
-                joined.set(new Uint8Array(buf2), buf1.byteLength);
-                var result = mimecodec.base64.encode(joined);
-                return header + result + '?=';
-            });
-
-            str = str.replace(/\=\?([\w_\-\*]+)\?([QqBb])\?[^\?]+\?\=/g, function(mimeWord) {
-                return mimecodec.mimeWordDecode(mimeWord);
+            str = str.replace(/\=\?[\w_\-\*]+\?[QqBb]\?[^\?]+\?\=/g, function(mimeWord) {
+                return mimecodec.mimeWordDecode(mimeWord.replace(/\s+/g, ''));
             });
 
             return str;
