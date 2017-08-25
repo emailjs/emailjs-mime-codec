@@ -330,7 +330,7 @@
          */
         mimeWordsDecode: function(str) {
             str = (str || "").toString().replace(/(=\?[^?]+\?[QqBb]\?[^?]+\?=)\s+(?==\?[^?]+\?[QqBb]\?[^?]*\?=)/g, "$1");
-            str = (str || "").toString().replace(/\?==\?[uU][tT][fF]-8\?[bB]\?/g, ""); // join bytes of multi-byte UTF-8
+            str = str.replace(/\?==\?[uU][tT][fF]-8\?[QqBb]\?/g, ""); // join bytes of multi-byte UTF-8
 
             str = str.replace(/\=\?[\w_\-\*]+\?[QqBb]\?[^\?]+\?\=/g, function(mimeWord) {
                 return mimecodec.mimeWordDecode(mimeWord);
