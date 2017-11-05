@@ -27,8 +27,8 @@
     "grunt": "^1.0.1",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-mocha-test": "^0.13.2",
-    "mocha": "^3.5.0",
-    "mocha-chrome": "^0.1.1",
+    "mocha": "^4.0.1",
+    "mocha-chrome": "^1.0.0",
     "requirejs": "^2.3.5"
   }
 }
