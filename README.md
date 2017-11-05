@@ -1,5 +1,7 @@
 # MIME Codec
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/emailjs/emailjs-mime-codec.svg)](https://greenkeeper.io/)
+
 `emailjs-mime-codec` allows you to encode and decode between different MIME related encodings. Quoted-Printable, Base64 etc.
 
 All input can use any charset (in this case, the value must not be a string but an arraybuffer of Uint8Array) but output is always unicode.
