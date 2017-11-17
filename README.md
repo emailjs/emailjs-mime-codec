@@ -7,35 +7,9 @@
 
 All input can use any charset (in this case, the value must not be a string but an arraybuffer of Uint8Array) but output is always unicode.
 
-[![Build Status](https://travis-ci.org/emailjs/emailjs-mime-codec.png)](https://travis-ci.org/emailjs/emailjs-mime-codec)
-
-## StringEncoding API
-
-This module requires `TextEncoder` and `TextDecoder` to exist as part of the StringEncoding API (see: [MDN](https://developer.mozilla.org/en-US/docs/WebAPI/Encoding_API) [whatwg.org](http://encoding.spec.whatwg.org/#api)). Firefox 19+ is basically the only browser that supports this at the time of writing, while [Chromium in canary, not stable](https://code.google.com/p/chromium/issues/detail?id=243354). Luckily, [there is a polyfill](https://github.com/emailjs/emailjs-stringencoding)!
-
-## Installation
-
-### [npm](https://www.npmjs.org/):
-
-    npm install --save emailjs-mime-codec
-
 ## Usage
 
-### AMD
-
-Require [mimecodec.js](src/mimecodec.js) as `emailjs-mime-codec`
-
-### Global context
-
-Include file [mimecodec.js](src/mimecodec.js) on the page.
-
-```html
-<script src="emailjs-mime-codec.js"></script>
-```
-
-This exposes global variable `mimecodec`
-
-## Methods
+    npm install --save emailjs-mime-codec
 
 ### foldLines
 
