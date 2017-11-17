@@ -20,7 +20,7 @@ All input can use any charset (in this case, the value must not be a string but 
       continuationEncode,
       foldLines,
       parseHeaderValue
-    } from './mimecodec'
+    } from 'emailjs-mime-codec'
 
 ### foldLines
 
