@@ -17,19 +17,19 @@ const MAX_MIME_WORD_LENGTH = 52
  */
 export function mimeEncode (data = '', fromCharset = 'UTF-8') {
   const buffer = convert(data, fromCharset)
-  const ranges = [ // https://tools.ietf.org/html/rfc2045#section-6.7
-    [0x09], // <TAB>
-    [0x0A], // <LF>
-    [0x0D], // <CR>
-    [0x20, 0x3C], // <SP>!"#$%&'()*+,-./0123456789:;
-    [0x3E, 0x7E] // >?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}
-  ]
-  return buffer.reduce((aggregate, ord, index) => _checkRanges(ord, ranges) &&
+  return buffer.reduce((aggregate, ord, index) => _checkRanges(ord) &&
     !((ord === 0x20 || ord === 0x09) && (index === buffer.length - 1 || buffer[index + 1] === 0x0a || buffer[index + 1] === 0x0d))
     ? aggregate + String.fromCharCode(ord) // if the char is in allowed range, then keep as is, unless it is a ws in the end of a line
     : aggregate + '=' + (ord < 0x10 ? '0' : '') + ord.toString(16).toUpperCase(), '')
 
-  function _checkRanges (nr, ranges) {
+  function _checkRanges (nr) {
+    const ranges = [ // https://tools.ietf.org/html/rfc2045#section-6.7
+      [0x09], // <TAB>
+      [0x0A], // <LF>
+      [0x0D], // <CR>
+      [0x20, 0x3C], // <SP>!"#$%&'()*+,-./0123456789:;
+      [0x3E, 0x7E] // >?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}
+    ]
     return ranges.reduce((val, range) => val || (range.length === 1 && nr === range[0]) || (range.length === 2 && nr >= range[0] && nr <= range[1]), false)
   }
 }
@@ -132,14 +132,7 @@ export function mimeWordEncode (data, mimeWordEncoding = 'Q', fromCharset) {
     const maxLength = MAX_MIME_WORD_LENGTH
     encodedStr = mimeEncode(data, fromCharset)
     // https://tools.ietf.org/html/rfc2047#section-5 rule (3)
-    encodedStr = encodedStr.replace(/[^a-z0-9!*+\-/=]/ig, function (chr) {
-      var code = chr.charCodeAt(0)
-      if (chr === ' ') {
-        return '_'
-      } else {
-        return '=' + (code < 0x10 ? '0' : '') + code.toString(16).toUpperCase()
-      }
-    })
+    encodedStr = encodedStr.replace(/[^a-z0-9!*+\-/=]/ig, chr => chr === ' ' ? '_' : ('=' + (chr.charCodeAt(0) < 0x10 ? '0' : '') + chr.charCodeAt(0).toString(16).toUpperCase()))
     if (encodedStr.length > maxLength) {
       encodedStr = _splitMimeEncodedString(encodedStr, maxLength).join('?= =?UTF-8?' + mimeWordEncoding + '?')
     }
@@ -219,7 +212,6 @@ export function mimeWordsDecode (str = '') {
  * flowed text (afterSpace=true)
  *
  * @param {String} str String to be folded
- * @param {Number} [lineLengthMax=76] Maximum length of a line
  * @param {Boolean} afterSpace If true, leave a space in th end of a line
  * @return {String} String with folded lines
  */
@@ -619,11 +611,9 @@ function _addBase64SoftLinebreaks (base64EncodedStr = '') {
 }
 
   /**
-   * Adds soft line breaks(the ones that will be stripped out when decoding QP) to
-   * ensure that no line in the message is never longer than lineLengthMax
+   * Adds soft line breaks(the ones that will be stripped out when decoding QP)
    *
    * @param {String} qpEncodedStr String in Quoted-Printable encoding
-   * @param {Number} lineLengthMax Maximum length of a line
    * @return {String} String with forced line breaks
    */
 function _addQPSoftLinebreaks (qpEncodedStr = '') {
