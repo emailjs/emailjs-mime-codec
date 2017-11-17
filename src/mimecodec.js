@@ -689,3 +689,5 @@ function _addQPSoftLinebreaks (qpEncodedStr = '') {
 
   return result
 }
+
+export { decode, convert }

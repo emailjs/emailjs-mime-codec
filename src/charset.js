@@ -1,5 +1,4 @@
 import { TextDecoder, TextEncoder } from 'text-encoding'
-import { fromTypedArray } from './mimecodec'
 
 /**
  * Encodes an unicode string into an Uint8Array object as UTF-8
@@ -8,6 +7,8 @@ import { fromTypedArray } from './mimecodec'
  * @return {Uint8Array} UTF-8 encoded typed array
  */
 export const encode = str => new TextEncoder('UTF-8').encode(str)
+
+const arr2str = arr => String.fromCharCode.apply(null, arr)
 
 /**
  * Decodes a string from Uint8Array to an unicode string using specified encoding
@@ -18,7 +19,7 @@ export const encode = str => new TextEncoder('UTF-8').encode(str)
  */
 export function decode (buf, fromCharset = 'utf-8') {
   const charsets = [
-    { charset: normalizeCharset(fromCharset), fatal: true },
+    { charset: normalizeCharset(fromCharset), fatal: false },
     { charset: 'utf-8', fatal: true },
     { charset: 'iso-8859-15', fatal: false }
   ]
@@ -27,7 +28,7 @@ export function decode (buf, fromCharset = 'utf-8') {
     try { return new TextDecoder(charset, { fatal }).decode(buf) } catch (e) { }
   }
 
-  return fromTypedArray(buf)
+  return arr2str(buf)
 }
 
 /**

@@ -1,8 +1,8 @@
 {
   "name": "emailjs-mime-codec",
   "description": "Encode and decode quoted printable and base64 strings",
-  "version": "2.0.0",
-  "main": "src/mimecodec",
+  "version": "2.0.1",
+  "main": "dist/mimecodec",
   "homepage": "https://github.com/emailjs/emailjs-mime-codec",
   "repository": {
     "type": "git",
