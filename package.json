@@ -24,6 +24,7 @@
     "test-watch": "$(npm bin)/mocha './src/*-unit.js' --reporter spec --require babel-register testutils.js --watch"
   },
   "dependencies": {
+    "babel-cli": "^6.26.0",
     "emailjs-base64": "^1.1.1",
     "text-encoding": "^0.6.4"
   },
