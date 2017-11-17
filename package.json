@@ -1,8 +1,8 @@
 {
   "name": "emailjs-mime-codec",
   "description": "Encode and decode quoted printable and base64 strings",
-  "version": "1.0.4",
-  "main": "src/emailjs-mime-codec",
+  "version": "2.0.0",
+  "main": "src/mimecodec",
   "homepage": "https://github.com/emailjs/emailjs-mime-codec",
   "repository": {
     "type": "git",
@@ -16,19 +16,38 @@
   ],
   "author": "Andris Reinman <andris@kreata.ee>",
   "scripts": {
-    "test": "grunt && mocha-chrome test/index.html"
+    "build": "./scripts/build.sh",
+    "release": "./scripts/release.sh",
+    "lint": "$(npm bin)/standard",
+    "test": "npm run lint && npm run unit",
+    "unit": "$(npm bin)/mocha './src/*-unit.js' --reporter spec --require babel-register testutils.js",
+    "test-watch": "$(npm bin)/mocha './src/*-unit.js' --reporter spec --require babel-register testutils.js --watch"
   },
   "dependencies": {
-    "emailjs-stringencoding": "~1.0.1"
+    "emailjs-base64": "^1.1.1",
+    "text-encoding": "^0.6.4"
   },
   "devDependencies": {
-    "amdefine": "^1.0.1",
-    "chai": "^4.1.1",
-    "grunt": "^1.0.1",
-    "grunt-contrib-jshint": "^1.1.0",
-    "grunt-mocha-test": "^0.13.2",
-    "mocha": "^3.5.0",
-    "mocha-chrome": "^0.1.1",
-    "requirejs": "^2.3.5"
+    "babel-preset-es2015": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "chai": "^4.1.2",
+    "mocha": "^4.0.1",
+    "nodemon": "^1.12.1",
+    "pre-commit": "^1.2.2",
+    "standard": "^10.0.3"
+  },
+  "standard": {
+    "globals": [
+      "describe",
+      "it",
+      "before",
+      "beforeAll",
+      "afterAll",
+      "after",
+      "expect"
+    ],
+    "ignore": [
+      "dist"
+    ]
   }
 }
