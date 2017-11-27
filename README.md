@@ -9,8 +9,9 @@ All input can use any charset (in this case, the value must not be a string but 
 ## Usage
 
     npm install --save emailjs-mime-codec
-    
+
     import {
+      encode, decode, convert
       mimeEncode, mimeDecode,
       base64Encode, base64Decode,
       quotedPrintableEncode, quotedPrintableDecode,
@@ -21,6 +22,20 @@ All input can use any charset (in this case, the value must not be a string but 
       foldLines,
       parseHeaderValue
     } from 'emailjs-mime-codec'
+
+### Charset functions
+
+```javascript
+encode(data: String) -> Uint8Array
+decode(data: Uint8Array, charset: String) -> String
+convert(data, charset: String) -> String
+```
+
+`encode` takes a String and returns a UTF-8 encoded Uint8Array.
+
+`decode` takes a Uint8Array along with a charset and decodes the typed array to a String. Charset defaults to UTF-8.
+
+`convert` chains encode and decode and converts an input string with a given encoding to a UTF-8 encoded Uint8Array.
 
 ### foldLines
 
