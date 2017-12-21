@@ -20,8 +20,7 @@
     "release": "./scripts/release.sh",
     "lint": "$(npm bin)/standard",
     "test": "npm run lint && npm run unit",
-    "unit": "$(npm bin)/mocha './src/*-unit.js' --reporter spec --require babel-register testutils.js",
-    "test-watch": "$(npm bin)/mocha './src/*-unit.js' --reporter spec --require babel-register testutils.js --watch"
+    "unit": "$(npm bin)/mocha './src/*-unit.js' --reporter spec --require babel-register testutils.js"
   },
   "dependencies": {
     "babel-cli": "^6.26.0",
@@ -33,7 +32,6 @@
     "babel-register": "^6.26.0",
     "chai": "^4.1.2",
     "mocha": "^4.0.1",
-    "nodemon": "^1.12.1",
     "pre-commit": "^1.2.2",
     "standard": "^10.0.3"
   },
