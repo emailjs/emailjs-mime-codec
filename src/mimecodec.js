@@ -63,12 +63,12 @@ export function mimeDecode (str = '', fromCharset = 'UTF-8') {
    * Encodes a string or an typed array of given charset into unicode
    * base64 string. Also adds line breaks
    *
-   * @param {String|Uint8Array} data String to be base64 encoded
-   * @param {String} [fromCharset='UTF-8']
+   * @param {String|Uint8Array} data String or typed array to be base64 encoded
+   * @param {String} Initial charset, e.g. 'binary'. Defaults to 'UTF-8'
    * @return {String} Base64 encoded string
    */
-export function base64Encode (data, fromCharset) {
-  const buf = (fromCharset !== 'binary' && typeof data !== 'string') ? convert(data || '', fromCharset) : data
+export function base64Encode (data, fromCharset = 'UTF-8') {
+  const buf = (typeof data !== 'string' && fromCharset === 'binary') ? data : convert(data, fromCharset)
   const b64 = encodeBase64(buf)
   return _addBase64SoftLinebreaks(b64)
 }

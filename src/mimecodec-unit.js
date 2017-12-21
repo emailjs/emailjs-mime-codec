@@ -55,14 +55,28 @@ describe('#mimeDecode', function () {
 })
 
 describe('#base64Encode', function () {
-  it('should base64Encode UTF-8', function () {
+  it('should base64Encode a UTF-8 string', function () {
     var str = 'tere ÕÄÖÕ',
       encodedStr = 'dGVyZSDDlcOEw5bDlQ=='
 
     expect(base64Encode(str)).to.equal(encodedStr)
   })
 
-  it('should base64Encode non UTF-8', function () {
+  it('should base64Encode an ASCII string', function () {
+    var str = 'bliblablubb',
+      encodedStr = 'YmxpYmxhYmx1YmI='
+
+    expect(base64Encode(str, 'binary')).to.equal(encodedStr)
+  })
+
+  it('should base64Encode a UTF-8 typed array', function () {
+    var buf = new Uint8Array([116, 101, 114, 101, 32, 195, 149, 195, 132, 195, 150, 195, 149]),
+      encodedStr = 'dGVyZSDDlcOEw5bDlQ=='
+
+    expect(base64Encode(buf)).to.equal(encodedStr)
+  })
+
+  it('should base64Encode non UTF-8 typed array', function () {
     var buf = new Uint8Array([0xBD, 0xC5]),
       encoding = 'ks_c_5601-1987',
       encodedStr = '7Iug'
