@@ -17,10 +17,10 @@ const MAX_MIME_WORD_LENGTH = 52
  */
 export function mimeEncode (data = '', fromCharset = 'UTF-8') {
   const buffer = convert(data, fromCharset)
-  return buffer.reduce((aggregate, ord, index) => _checkRanges(ord) &&
-    !((ord === 0x20 || ord === 0x09) && (index === buffer.length - 1 || buffer[index + 1] === 0x0a || buffer[index + 1] === 0x0d))
-    ? aggregate + String.fromCharCode(ord) // if the char is in allowed range, then keep as is, unless it is a ws in the end of a line
-    : aggregate + '=' + (ord < 0x10 ? '0' : '') + ord.toString(16).toUpperCase(), '')
+  return buffer.reduce((aggregate, ord, index) =>
+    _checkRanges(ord) && !((ord === 0x20 || ord === 0x09) && (index === buffer.length - 1 || buffer[index + 1] === 0x0a || buffer[index + 1] === 0x0d))
+      ? aggregate + String.fromCharCode(ord) // if the char is in allowed range, then keep as is, unless it is a ws in the end of a line
+      : aggregate + '=' + (ord < 0x10 ? '0' : '') + ord.toString(16).toUpperCase(), '')
 
   function _checkRanges (nr) {
     const ranges = [ // https://tools.ietf.org/html/rfc2045#section-6.7
@@ -34,13 +34,13 @@ export function mimeEncode (data = '', fromCharset = 'UTF-8') {
   }
 }
 
-  /**
-   * Decodes mime encoded string to an unicode string
-   *
-   * @param {String} str Mime encoded string
-   * @param {String} [fromCharset='UTF-8'] Source encoding
-   * @return {String} Decoded unicode string
-   */
+/**
+ * Decodes mime encoded string to an unicode string
+ *
+ * @param {String} str Mime encoded string
+ * @param {String} [fromCharset='UTF-8'] Source encoding
+ * @return {String} Decoded unicode string
+ */
 export function mimeDecode (str = '', fromCharset = 'UTF-8') {
   const encodedBytesCount = (str.match(/=[\da-fA-F]{2}/g) || []).length
   let buffer = new Uint8Array(str.length - encodedBytesCount * 2)
@@ -59,40 +59,40 @@ export function mimeDecode (str = '', fromCharset = 'UTF-8') {
   return decode(buffer, fromCharset)
 }
 
-  /**
-   * Encodes a string or an typed array of given charset into unicode
-   * base64 string. Also adds line breaks
-   *
-   * @param {String|Uint8Array} data String or typed array to be base64 encoded
-   * @param {String} Initial charset, e.g. 'binary'. Defaults to 'UTF-8'
-   * @return {String} Base64 encoded string
-   */
+/**
+ * Encodes a string or an typed array of given charset into unicode
+ * base64 string. Also adds line breaks
+ *
+ * @param {String|Uint8Array} data String or typed array to be base64 encoded
+ * @param {String} Initial charset, e.g. 'binary'. Defaults to 'UTF-8'
+ * @return {String} Base64 encoded string
+ */
 export function base64Encode (data, fromCharset = 'UTF-8') {
   const buf = (typeof data !== 'string' && fromCharset === 'binary') ? data : convert(data, fromCharset)
   const b64 = encodeBase64(buf)
   return _addBase64SoftLinebreaks(b64)
 }
 
-  /**
-   * Decodes a base64 string of any charset into an unicode string
-   *
-   * @param {String} str Base64 encoded string
-   * @param {String} [fromCharset='UTF-8'] Original charset of the base64 encoded string
-   * @return {String} Decoded unicode string
-   */
+/**
+ * Decodes a base64 string of any charset into an unicode string
+ *
+ * @param {String} str Base64 encoded string
+ * @param {String} [fromCharset='UTF-8'] Original charset of the base64 encoded string
+ * @return {String} Decoded unicode string
+ */
 export function base64Decode (str, fromCharset) {
   return decode(decodeBase64(str, OUTPUT_TYPED_ARRAY), fromCharset)
 }
 
-  /**
-   * Encodes a string or an Uint8Array into a quoted printable encoding
-   * This is almost the same as mimeEncode, except line breaks will be changed
-   * as well to ensure that the lines are never longer than allowed length
-   *
-   * @param {String|Uint8Array} data String or an Uint8Array to mime encode
-   * @param {String} [fromCharset='UTF-8'] Original charset of the string
-   * @return {String} Mime encoded string
-   */
+/**
+ * Encodes a string or an Uint8Array into a quoted printable encoding
+ * This is almost the same as mimeEncode, except line breaks will be changed
+ * as well to ensure that the lines are never longer than allowed length
+ *
+ * @param {String|Uint8Array} data String or an Uint8Array to mime encode
+ * @param {String} [fromCharset='UTF-8'] Original charset of the string
+ * @return {String} Mime encoded string
+ */
 export function quotedPrintableEncode (data = '', fromCharset = 'UTF-8') {
   const mimeEncodedStr = mimeEncode(data, fromCharset)
     .replace(/\r?\n|\r/g, '\r\n') // fix line breaks, ensure <CR><LF>
@@ -248,15 +248,15 @@ export function foldLines (str = '', afterSpace) {
   return result
 }
 
-  /**
-   * Encodes and folds a header line for a MIME message header.
-   * Shorthand for mimeWordsEncode + foldLines
-   *
-   * @param {String} key Key name, will not be encoded
-   * @param {String|Uint8Array} value Value to be encoded
-   * @param {String} [fromCharset='UTF-8'] Character set of the value
-   * @return {String} encoded and folded header line
-   */
+/**
+ * Encodes and folds a header line for a MIME message header.
+ * Shorthand for mimeWordsEncode + foldLines
+ *
+ * @param {String} key Key name, will not be encoded
+ * @param {String|Uint8Array} value Value to be encoded
+ * @param {String} [fromCharset='UTF-8'] Character set of the value
+ * @return {String} encoded and folded header line
+ */
 export function headerLineEncode (key, value, fromCharset) {
   var encodedValue = mimeWordsEncode(value, 'Q', fromCharset)
   return foldLines(key + ': ' + encodedValue)
@@ -415,7 +415,7 @@ export function parseHeaderValue (str) {
     }
   })
 
-      // concatenate split rfc2231 strings and convert encoded strings to mime encoded words
+  // concatenate split rfc2231 strings and convert encoded strings to mime encoded words
   Object.keys(response.params).forEach(function (key) {
     var value
     if (response.params[key] && Array.isArray(response.params[key].values)) {
@@ -465,9 +465,9 @@ export function continuationEncode (key, data, maxLength, fromCharset) {
 
   maxLength = maxLength || 50
 
-      // process ascii only text
+  // process ascii only text
   if (/^[\w.\- ]*$/.test(data)) {
-          // check if conversion is even needed
+    // check if conversion is even needed
     if (encodedStr.length <= maxLength) {
       return [{
         key: key,
@@ -525,7 +525,7 @@ export function continuationEncode (key, data, maxLength, fromCharset) {
         }
       }
 
-              // if the line is already too long, push it to the list and start a new one
+      // if the line is already too long, push it to the list and start a new one
       if ((line + chr).length >= maxLength) {
         list.push({
           line: line,
@@ -553,9 +553,9 @@ export function continuationEncode (key, data, maxLength, fromCharset) {
 
   return list.map(function (item, i) {
     return {
-              // encoded lines: {name}*{part}*
-              // unencoded lines: {name}*{part}
-              // if any line needs to be encoded then the first line (part==0) is always encoded
+      // encoded lines: {name}*{part}*
+      // unencoded lines: {name}*{part}
+      // if any line needs to be encoded then the first line (part==0) is always encoded
       key: key + '*' + i + (item.encoded ? '*' : ''),
       value: /[\s";=]/.test(item.line) ? '"' + item.line + '"' : item.line
     }
@@ -610,12 +610,12 @@ function _addBase64SoftLinebreaks (base64EncodedStr = '') {
   return base64EncodedStr.trim().replace(new RegExp('.{' + MAX_LINE_LENGTH + '}', 'g'), '$&\r\n').trim()
 }
 
-  /**
-   * Adds soft line breaks(the ones that will be stripped out when decoding QP)
-   *
-   * @param {String} qpEncodedStr String in Quoted-Printable encoding
-   * @return {String} String with forced line breaks
-   */
+/**
+ * Adds soft line breaks(the ones that will be stripped out when decoding QP)
+ *
+ * @param {String} qpEncodedStr String in Quoted-Printable encoding
+ * @return {String} String with forced line breaks
+ */
 function _addQPSoftLinebreaks (qpEncodedStr = '') {
   let pos = 0
   const len = qpEncodedStr.length
@@ -623,7 +623,7 @@ function _addQPSoftLinebreaks (qpEncodedStr = '') {
   let result = ''
   let match, line
 
-      // insert soft linebreaks where needed
+  // insert soft linebreaks where needed
   while (pos < len) {
     line = qpEncodedStr.substr(pos, MAX_LINE_LENGTH)
     if ((match = line.match(/\r\n/))) {
