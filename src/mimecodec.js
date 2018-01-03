@@ -1,10 +1,12 @@
 import { encode as encodeBase64, decode as decodeBase64, OUTPUT_TYPED_ARRAY } from 'emailjs-base64'
 import { encode, decode, convert } from './charset'
+import { pipe } from 'ramda'
 
 // Lines can't be longer than 76 + <CR><LF> = 78 bytes
 // http://tools.ietf.org/html/rfc2045#section-6.7
 const MAX_LINE_LENGTH = 76
 const MAX_MIME_WORD_LENGTH = 52
+const MAX_B64_MIME_WORD_LENGTH = 39
 
 /**
  * Encodes all non printable and non ascii bytes to =XX form, where XX is the
@@ -117,41 +119,39 @@ export function quotedPrintableDecode (str = '', fromCharset = 'UTF-8') {
   return mimeDecode(rawString, fromCharset)
 }
 
-  /**
-   * Encodes a string or an Uint8Array to an UTF-8 MIME Word (rfc2047)
-   *
-   * @param {String|Uint8Array} data String to be encoded
-   * @param {String} mimeWordEncoding='Q' Encoding for the mime word, either Q or B
-   * @param {String} [fromCharset='UTF-8'] Source sharacter set
-   * @return {String} Single or several mime words joined together
-   */
-export function mimeWordEncode (data, mimeWordEncoding = 'Q', fromCharset) {
-  let encodedStr
+/**
+ * Encodes a string or an Uint8Array to an UTF-8 MIME Word
+ *   https://tools.ietf.org/html/rfc2047
+ *
+ * @param {String|Uint8Array} data String to be encoded
+ * @param {String} mimeWordEncoding='Q' Encoding for the mime word, either Q or B
+ * @param {String} [fromCharset='UTF-8'] Source sharacter set
+ * @return {String} Single or several mime words joined together
+ */
+export function mimeWordEncode (data, mimeWordEncoding = 'Q', fromCharset = 'UTF-8') {
+  const str = (typeof data === 'string') ? data : decode(data, fromCharset)
+  let parts
 
   if (mimeWordEncoding === 'Q') {
-    const maxLength = MAX_MIME_WORD_LENGTH
-    encodedStr = mimeEncode(data, fromCharset)
-    // https://tools.ietf.org/html/rfc2047#section-5 rule (3)
-    encodedStr = encodedStr.replace(/[^a-z0-9!*+\-/=]/ig, chr => chr === ' ' ? '_' : ('=' + (chr.charCodeAt(0) < 0x10 ? '0' : '') + chr.charCodeAt(0).toString(16).toUpperCase()))
-    if (encodedStr.length > maxLength) {
-      encodedStr = _splitMimeEncodedString(encodedStr, maxLength).join('?= =?UTF-8?' + mimeWordEncoding + '?')
-    }
-  } else if (mimeWordEncoding === 'B') {
-    encodedStr = typeof data === 'string' ? data : decode(data, fromCharset)
-    const maxLength = Math.max(3, (MAX_MIME_WORD_LENGTH - MAX_MIME_WORD_LENGTH % 4) / 4 * 3)
-    if (encodedStr.length > maxLength) {
-      // RFC2047 6.3 (2) states that encoded-word must include an integral number of characters, so no chopping unicode sequences
-      const parts = []
-      for (let i = 0, len = encodedStr.length; i < len; i += maxLength) {
-        parts.push(base64Encode(encodedStr.substr(i, maxLength)))
-      }
-      return '=?UTF-8?' + mimeWordEncoding + '?' + parts.join('?= =?UTF-8?' + mimeWordEncoding + '?') + '?='
-    }
+    let encodedStr = pipe(mimeEncode, qEncodeForbiddenHeaderChars)(str)
+    parts = encodedStr.length < MAX_MIME_WORD_LENGTH ? [encodedStr] : _splitMimeEncodedString(encodedStr, MAX_MIME_WORD_LENGTH)
   } else {
-    encodedStr = base64Encode(encodedStr)
+    const regex = new RegExp(`[\\s\\S]{1,${MAX_B64_MIME_WORD_LENGTH}}`, 'g')
+    parts = (str.match(regex) || []).map(encode).map(encodeBase64)
   }
 
-  return '=?UTF-8?' + mimeWordEncoding + '?' + encodedStr + (encodedStr.substr(-2) === '?=' ? '' : '?=')
+  const prefix = '=?UTF-8?' + mimeWordEncoding + '?'
+  const suffix = '?= '
+  return parts.map(p => prefix + p + suffix).join('').trim()
+}
+
+/**
+ * Q-Encodes remaining forbidden header chars
+ *   https://tools.ietf.org/html/rfc2047#section-5
+ */
+const qEncodeForbiddenHeaderChars = function (str) {
+  const qEncode = chr => chr === ' ' ? '_' : ('=' + (chr.charCodeAt(0) < 0x10 ? '0' : '') + chr.charCodeAt(0).toString(16).toUpperCase())
+  return str.replace(/[^a-z0-9!*+\-/=]/ig, qEncode)
 }
 
 /**

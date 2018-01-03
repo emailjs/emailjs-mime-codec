@@ -209,6 +209,10 @@ describe('#mimeWordEncode', function () {
   it('should QP-encode mime word', function () {
     expect('=?UTF-8?Q?J=C3=B5ge-va=C5=BD?=').to.equal(mimeWordEncode(new Uint8Array([0x4A, 0xF5, 0x67, 0x65, 0x2D, 0x76, 0x61, 0xDE]), 'Q', 'iso-8859-13'))
   })
+
+  it('should Base64-encode mime word', () => {
+    expect(mimeWordEncode('Привет и до свидания', 'B')).to.equal('=?UTF-8?B?0J/RgNC40LLQtdGCINC4INC00L4g0YHQstC40LTQsNC90LjRjw==?=')
+  })
 })
 
 describe('#mimeWordsEncode', function () {
