@@ -1,12 +1,12 @@
 import { encode as encodeBase64, decode as decodeBase64, OUTPUT_TYPED_ARRAY } from 'emailjs-base64'
 import { encode, decode, convert } from './charset'
 import { pipe } from 'ramda'
+import { splitTypedArrayEvery } from './utils'
 
 // Lines can't be longer than 76 + <CR><LF> = 78 bytes
 // http://tools.ietf.org/html/rfc2045#section-6.7
 const MAX_LINE_LENGTH = 76
 const MAX_MIME_WORD_LENGTH = 52
-const MAX_B64_MIME_WORD_LENGTH = 39
 
 /**
  * Encodes all non printable and non ascii bytes to =XX form, where XX is the
@@ -129,15 +129,15 @@ export function quotedPrintableDecode (str = '', fromCharset = 'UTF-8') {
  * @return {String} Single or several mime words joined together
  */
 export function mimeWordEncode (data, mimeWordEncoding = 'Q', fromCharset = 'UTF-8') {
-  const str = (typeof data === 'string') ? data : decode(data, fromCharset)
   let parts
 
   if (mimeWordEncoding === 'Q') {
+    const str = (typeof data === 'string') ? data : decode(data, fromCharset)
     let encodedStr = pipe(mimeEncode, qEncodeForbiddenHeaderChars)(str)
     parts = encodedStr.length < MAX_MIME_WORD_LENGTH ? [encodedStr] : _splitMimeEncodedString(encodedStr, MAX_MIME_WORD_LENGTH)
   } else {
-    const regex = new RegExp(`[\\s\\S]{1,${MAX_B64_MIME_WORD_LENGTH}}`, 'g')
-    parts = (str.match(regex) || []).map(encode).map(encodeBase64)
+    const buf = convert(data, fromCharset)
+    parts = splitTypedArrayEvery(MAX_MIME_WORD_LENGTH, buf).map(encodeBase64)
   }
 
   const prefix = '=?UTF-8?' + mimeWordEncoding + '?'

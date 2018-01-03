@@ -213,6 +213,17 @@ describe('#mimeWordEncode', function () {
   it('should Base64-encode mime word', () => {
     expect(mimeWordEncode('Привет и до свидания', 'B')).to.equal('=?UTF-8?B?0J/RgNC40LLQtdGCINC4INC00L4g0YHQstC40LTQsNC90LjRjw==?=')
   })
+
+  it('should Base64-encode a long mime word', () => {
+    const payload = 'Привет и до свиданияПривет и до свиданияПривет и до свиданияПривет и до свиданияПривет и до свиданияПривет и до свиданияПривет и до свиданияПривет и до свидания'
+    const expected = '=?UTF-8?B?0J/RgNC40LLQtdGCINC4INC00L4g0YHQstC40LTQsNC90LjRj9Cf0YDQuNCy0LXRgiDQuA==?= ' +
+    '=?UTF-8?B?INC00L4g0YHQstC40LTQsNC90LjRj9Cf0YDQuNCy0LXRgiDQuCDQtNC+INGB0LLQuNC00A==?= ' +
+    '=?UTF-8?B?sNC90LjRj9Cf0YDQuNCy0LXRgiDQuCDQtNC+INGB0LLQuNC00LDQvdC40Y/Qn9GA0LjQsg==?= ' +
+    '=?UTF-8?B?0LXRgiDQuCDQtNC+INGB0LLQuNC00LDQvdC40Y/Qn9GA0LjQstC10YIg0Lgg0LTQviDRgQ==?= ' +
+    '=?UTF-8?B?0LLQuNC00LDQvdC40Y/Qn9GA0LjQstC10YIg0Lgg0LTQviDRgdCy0LjQtNCw0L3QuNGP0A==?= ' +
+    '=?UTF-8?B?n9GA0LjQstC10YIg0Lgg0LTQviDRgdCy0LjQtNCw0L3QuNGP?='
+    expect(mimeWordEncode(payload, 'B')).to.equal(expected)
+  })
 })
 
 describe('#mimeWordsEncode', function () {
