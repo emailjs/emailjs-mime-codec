@@ -266,6 +266,14 @@ describe('#mimeWordsDecode', function () {
     expect(mimeWordsDecode(output2)).to.equal(input2)
   })
 
+  it('should decode empty string', function () {
+    var encoded1 = '=?UTF-8?Q??=',
+      encoded2 = '=?UTF-8?B??='
+
+    expect(mimeWordsDecode(encoded1)).to.equal('')
+    expect(mimeWordsDecode(encoded2)).to.equal('')
+  })
+
   it('should join bytes of Base64 multi-byte UTF-8 characters before parsing', function () {
     expect('GLG: Regulation of Taxi in China - 张一兵').to.equal(mimeWordsDecode('=?utf-8?B?R0xHOiBSZWd1bGF0aW9uIG9mIFRheGkgaW4gQ2hpbmEgLSDl?= =?utf-8?B?vKDkuIDlhbU=?='))
     expect('***SPAM*** Очки виртуальной реальности').to.equal(mimeWordsDecode('***SPAM*** =?utf-8?B?0J7Rh9C60Lgg0LLQuNGA0YLRg9Cw0LvRjNC90L7QuSDR?=\r\n	=?utf-8?B?gNC10LDQu9GM0L3QvtGB0YLQuA==?='))

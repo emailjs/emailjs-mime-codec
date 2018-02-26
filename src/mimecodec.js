@@ -188,7 +188,7 @@ export function mimeWordsEncode (data = '', mimeWordEncoding = 'Q', fromCharset 
  * @return {String} Decoded unicode string
  */
 export function mimeWordDecode (str = '') {
-  const match = str.match(/^=\?([\w_\-*]+)\?([QqBb])\?([^?]+)\?=$/i)
+  const match = str.match(/^=\?([\w_\-*]+)\?([QqBb])\?([^?]*)\?=$/i)
   if (!match) return str
 
   // RFC2231 added language tag to the encoding
@@ -216,7 +216,7 @@ export function mimeWordDecode (str = '') {
 export function mimeWordsDecode (str = '') {
   str = str.toString().replace(/(=\?[^?]+\?[QqBb]\?[^?]+\?=)\s+(?==\?[^?]+\?[QqBb]\?[^?]*\?=)/g, '$1')
   str = str.replace(/\?==\?[uU][tT][fF]-8\?[QqBb]\?/g, '') // join bytes of multi-byte UTF-8
-  str = str.replace(/=\?[\w_\-*]+\?[QqBb]\?[^?]+\?=/g, mimeWord => mimeWordDecode(mimeWord.replace(/\s+/g, '')))
+  str = str.replace(/=\?[\w_\-*]+\?[QqBb]\?[^?]*\?=/g, mimeWord => mimeWordDecode(mimeWord.replace(/\s+/g, '')))
 
   return str
 }
