@@ -8,14 +8,14 @@ import { TextDecoder, TextEncoder } from 'text-encoding'
  */
 export const encode = str => new TextEncoder('UTF-8').encode(str)
 
-const arr2str = arr => String.fromCharCode.apply(null, arr)
+export const arr2str = arr => String.fromCharCode.apply(null, arr)
 
 /**
  * Decodes a string from Uint8Array to an unicode string using specified encoding
  *
  * @param {Uint8Array} buf Binary data to be decoded
  * @param {String} Binary data is decoded into string using this charset
- * @return {String} Decded string
+ * @return {String} Decoded string
  */
 export function decode (buf, fromCharset = 'utf-8') {
   const charsets = [
@@ -28,7 +28,7 @@ export function decode (buf, fromCharset = 'utf-8') {
     try { return new TextDecoder(charset, { fatal }).decode(buf) } catch (e) { }
   }
 
-  return arr2str(buf)
+  return arr2str(buf) // all else fails, treat it as binary
 }
 
 /**

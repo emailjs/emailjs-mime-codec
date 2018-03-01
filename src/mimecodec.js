@@ -1,5 +1,5 @@
 import { encode as encodeBase64, decode as decodeBase64, OUTPUT_TYPED_ARRAY } from 'emailjs-base64'
-import { encode, decode, convert } from './charset'
+import { encode, decode, convert, arr2str } from './charset'
 import { pipe } from 'ramda'
 
 // Lines can't be longer than 76 + <CR><LF> = 78 bytes
@@ -83,7 +83,8 @@ export function base64Encode (data, fromCharset = 'UTF-8') {
  * @return {String} Decoded unicode string
  */
 export function base64Decode (str, fromCharset) {
-  return decode(decodeBase64(str, OUTPUT_TYPED_ARRAY), fromCharset)
+  const buf = decodeBase64(str, OUTPUT_TYPED_ARRAY)
+  return fromCharset === 'binary' ? arr2str(buf) : decode(buf, fromCharset)
 }
 
 /**
