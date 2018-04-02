@@ -178,7 +178,7 @@ describe('#quotedPrintableEncode', function () {
   })
 
   it('should encode surrogate pair', function () {
-                // pile of poo :)
+    // pile of poo :)
     expect('=F0=9F=92=A9').to.equal(quotedPrintableEncode('\ud83d\udca9'))
   })
 })
