@@ -1,5 +1,5 @@
 import { encode as encodeBase64, decode as decodeBase64, OUTPUT_TYPED_ARRAY } from 'emailjs-base64'
-import { encode, decode, convert, arr2str } from './charset'
+import { encode, decode, decodeStream, convert, arr2str } from './charset'
 import { pipe } from 'ramda'
 
 // Lines can't be longer than 76 + <CR><LF> = 78 bytes
@@ -80,11 +80,13 @@ export function base64Encode (data, fromCharset = 'UTF-8') {
  *
  * @param {String} str Base64 encoded string
  * @param {String} [fromCharset='UTF-8'] Original charset of the base64 encoded string
- * @return {String} Decoded unicode string
+ * @param {TextDecoder} decoder Decoder to be used
+ * @param {Boolean} stream If true, store undecodable trailing bytes until next call
+ * @return {Object} A pair {result, decoder}, this decoder can be used for further decoding calls
  */
-export function base64Decode (str, fromCharset) {
+export function base64Decode (str, fromCharset, decoder, stream) {
   const buf = decodeBase64(str, OUTPUT_TYPED_ARRAY)
-  return fromCharset === 'binary' ? arr2str(buf) : decode(buf, fromCharset)
+  return fromCharset === 'binary' ? { result: arr2str(buf) } : decodeStream(buf, fromCharset, decoder, stream)
 }
 
 /**
@@ -200,7 +202,7 @@ export function mimeWordDecode (str = '') {
   const rawString = (match[3] || '').replace(/_/g, ' ')
 
   if (encoding === 'B') {
-    return base64Decode(rawString, fromCharset)
+    return base64Decode(rawString, fromCharset).result
   } else if (encoding === 'Q') {
     return mimeDecode(rawString, fromCharset)
   } else {

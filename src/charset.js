@@ -14,21 +14,40 @@ export const arr2str = arr => String.fromCharCode.apply(null, arr)
  * Decodes a string from Uint8Array to an unicode string using specified encoding
  *
  * @param {Uint8Array} buf Binary data to be decoded
- * @param {String} Binary data is decoded into string using this charset
+ * @param {String} fromCharset Binary data is decoded into string using this charset
  * @return {String} Decoded string
  */
-export function decode (buf, fromCharset = 'utf-8') {
+export const decode = (buf, fromCharset = 'utf-8') => decodeStream(buf, fromCharset).result
+
+/**
+ * Decodes a string from Uint8Array to an unicode string using specified encoding or specified decoder
+ *
+ * @param {Uint8Array} buf Binary data to be decoded
+ * @param {String} fromCharset Binary data is decoded into string using this charset
+ * @param {TextDecoder} decoder Decoder to be used
+ * @param {Boolean} stream If true, store undecodable trailing bytes until next call
+ * @return {Object} A pair {decoder, result}, this decoder can be used for further streaming calls
+ */
+export function decodeStream (buf, fromCharset = 'utf-8', decoder, stream) {
   const charsets = [
+    { dec: decoder },
     { charset: normalizeCharset(fromCharset), fatal: false },
     { charset: 'utf-8', fatal: true },
     { charset: 'iso-8859-15', fatal: false }
   ]
 
-  for (const {charset, fatal} of charsets) {
-    try { return new TextDecoder(charset, { fatal }).decode(buf) } catch (e) { }
+  for (let {dec, charset, fatal} of charsets) {
+    if (!dec && !charset) {
+      continue
+    }
+    try {
+      dec = dec || new TextDecoder(charset, { fatal })
+      const result = dec.decode(buf, { stream })
+      return { decoder: dec, result }
+    } catch (e) { }
   }
 
-  return arr2str(buf) // all else fails, treat it as binary
+  return { result: arr2str(buf) } // all else fails, treat it as binary
 }
 
 /**

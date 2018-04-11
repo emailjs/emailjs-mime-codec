@@ -90,7 +90,7 @@ describe('#base64Decode', function () {
     var str = 'tere ÕÄÖÕ',
       encodedStr = 'dGVyZSDDlcOEw5bDlQ=='
 
-    expect(base64Decode(encodedStr)).to.equal(str)
+    expect(base64Decode(encodedStr).result).to.equal(str)
   })
 
   it('should decode non UTF-8', function () {
@@ -98,7 +98,7 @@ describe('#base64Decode', function () {
       encoding = 'ks_c_5601-1987',
       encodedStr = 'vcU='
 
-    expect(base64Decode(encodedStr, encoding)).to.equal(str)
+    expect(base64Decode(encodedStr, encoding).result).to.equal(str)
   })
 
   it('should decode binary b64', () => {
@@ -112,8 +112,26 @@ describe('#base64Decode', function () {
       'CSqGSIb3DQEHATAdBglghkgBZQMEAQIEEKt6VqFcNz/VYFwu85DTOqGggAQgIHc45LBiYIQqhxNw\n' +
       'hlRk4BxMiyiQRdLcVdCwwkKyX2sAAAAA\n'
     const expectedText = Buffer.from(text, 'base64').toString('hex').toUpperCase()
-    const actualText = Buffer.from(base64Decode(text, 'binary'), 'binary').toString('hex').toUpperCase()
+    const actualText = Buffer.from(base64Decode(text, 'binary').result, 'binary').toString('hex').toUpperCase()
     expect(actualText).to.equal(expectedText)
+  })
+
+  it('should store undecodable trailing bytes until next call', function () {
+    var str = ' высво',
+      encodedStr = 'INCy0YvRgdCy0L7Q',
+      {result, decoder} = base64Decode(encodedStr, undefined, undefined, true)
+
+    expect(result).to.equal(str)
+
+    str = 'бодим '
+    encodedStr = 'sdC+0LTQuNC8IN'
+    result = base64Decode(encodedStr, undefined, decoder, true).result
+
+    expect(result).to.equal(str)
+
+    result = base64Decode('', undefined, decoder).result
+
+    expect(result).to.equal('')
   })
 })
 
