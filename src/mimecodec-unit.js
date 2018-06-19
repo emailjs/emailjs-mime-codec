@@ -350,10 +350,10 @@ describe('#continuationEncode', function () {
   it('should encode and split unicode', function () {
     expect([{
       key: 'title*0*',
-      value: 'utf-8\'\'this%20is%20'
+      value: 'utf-8\'\'this%20is%20j'
     }, {
-      key: 'title*1',
-      value: '"just a title "'
+      key: 'title*1*',
+      value: 'ust%20a%20title%20'
     }, {
       key: 'title*2*',
       value: '%C3%B5%C3%A4%C3%B6'
@@ -370,6 +370,13 @@ describe('#continuationEncode', function () {
     }).join('; ')
     var parsedHeader = parseHeaderValue(headerLine)
     expect(input).to.equal(mimeWordsDecode(parsedHeader.params.filename))
+  })
+
+  it('should not cause URIError when encoding multi-byte unicode chars', function () {
+    expect([{
+      key: 'title*0*',
+      value: 'utf-8\'\'%F0%9F%98%8A'
+    }]).to.deep.equal(continuationEncode('title', '😊', 500))
   })
 })
 
