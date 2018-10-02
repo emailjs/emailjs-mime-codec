@@ -301,6 +301,10 @@ describe('#mimeWordsDecode', function () {
     expect('гос (передай кому надо тоже').to.equal(mimeWordsDecode('=?utf-8?Q?=D0=B3=D0=BE=D1=81_?==?utf-8?Q?(=D0=BF=D0=B5=D1=80=D0=B5=D0=B4=D0=B0=D0=B9_=D0=BA=D0=BE=D0?= =?utf-8?Q?=BC=D1=83_=D0=BD=D0=B0=D0=B4=D0=BE_=D1=82=D0=BE=D0=B6=D0=B5?='))
   })
 
+  it('should not join together encoded words with different encodings', function () {
+    expect(' ⏯ Trendy Netflix Redesigns + ✈️ Airport App Challenge').to.equal(mimeWordsDecode('=?utf-8?b?IOKPryBUcmVuZHkgTmV0ZmxpeCBSZWRlc2lnbnMgKyDinIjvuI8g?= =?utf-8?q?Airport_App_Challenge?='))
+  })
+
   it('should decode Quoted-Printable with bad line split', function () {
     expect('гос (передай кому надо тоже').to.equal(mimeWordsDecode('=?utf-8?Q?=D0=B3=D0=BE=D1=81_?==?utf-8?Q?(=D0=BF=D0=B5=D1=80=D0=B5= D0=B4=D0=B0=D0=B9_=D0=BA=D0=BE=D0?= =?utf-8?Q?=BC=D1=83_=D0=BD=D0=B0=D0=B4=D0=BE_=D1=82=D0=BE=D0=B6=D0=B5?='))
   })

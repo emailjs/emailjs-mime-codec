@@ -216,7 +216,13 @@ export function mimeWordDecode (str = '') {
  */
 export function mimeWordsDecode (str = '') {
   str = str.toString().replace(/(=\?[^?]+\?[QqBb]\?[^?]+\?=)\s+(?==\?[^?]+\?[QqBb]\?[^?]*\?=)/g, '$1')
-  str = str.replace(/\?==\?[uU][tT][fF]-8\?[QqBb]\?/g, '') // join bytes of multi-byte UTF-8
+  // join bytes of multi-byte UTF-8
+  let prevEncoding
+  str = str.replace(/(\?=)?=\?[uU][tT][fF]-8\?([QqBb])\?/g, (match, endOfPrevWord, encoding) => {
+    const result = (endOfPrevWord && encoding === prevEncoding) ? '' : match
+    prevEncoding = encoding
+    return result
+  })
   str = str.replace(/=\?[\w_\-*]+\?[QqBb]\?[^?]*\?=/g, mimeWord => mimeWordDecode(mimeWord.replace(/\s+/g, '')))
 
   return str
