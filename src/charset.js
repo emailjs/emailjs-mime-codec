@@ -24,7 +24,7 @@ export function decode (buf, fromCharset = 'utf-8') {
     { charset: 'iso-8859-15', fatal: false }
   ]
 
-  for (const {charset, fatal} of charsets) {
+  for (const { charset, fatal } of charsets) {
     try { return new TextDecoder(charset, { fatal }).decode(buf) } catch (e) { }
   }
 
