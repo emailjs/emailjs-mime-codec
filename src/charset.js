@@ -8,7 +8,16 @@ import { TextDecoder, TextEncoder } from 'text-encoding'
  */
 export const encode = str => new TextEncoder('UTF-8').encode(str)
 
-export const arr2str = arr => String.fromCharCode.apply(null, arr)
+export const arr2str = arr => {
+  const CHUNK_SZ = 0x8000
+  const strs = []
+
+  for (let i = 0; i < arr.length; i += CHUNK_SZ) {
+    strs.push(String.fromCharCode.apply(null, arr.subarray(i, i + CHUNK_SZ)))
+  }
+
+  return strs.join('')
+}
 
 /**
  * Decodes a string from Uint8Array to an unicode string using specified encoding
