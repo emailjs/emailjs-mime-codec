@@ -1,7 +1,7 @@
 {
   "name": "emailjs-mime-codec",
   "description": "Encode and decode quoted printable and base64 strings",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "main": "dist/mimecodec",
   "homepage": "https://github.com/emailjs/emailjs-mime-codec",
   "repository": {
@@ -18,7 +18,7 @@
   "scripts": {
     "build": "./scripts/build.sh",
     "lint": "$(npm bin)/standard",
-    "preversion": "npm run build","preversion": "npm run build",
+    "preversion": "npm run build",
     "test": "npm run lint && npm run unit",
     "unit": "$(npm bin)/mocha './src/*-unit.js' --reporter spec --require babel-register testutils.js"
   },
