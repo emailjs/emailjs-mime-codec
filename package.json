@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "emailjs-base64": "^1.1.4",
-    "ramda": "^0.26.1",
+    "ramda": "^0.27.0",
     "text-encoding": "^0.7.0"
   },
   "devDependencies": {
