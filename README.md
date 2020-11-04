@@ -24,7 +24,7 @@ All input can use any charset (in this case, the value must not be a string but 
     npm install --save emailjs-mime-codec
 
     import {
-      encode, decode, convert
+      encode, decode, convert,
       mimeEncode, mimeDecode,
       base64Encode, base64Decode,
       quotedPrintableEncode, quotedPrintableDecode,
