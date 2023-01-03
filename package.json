@@ -20,7 +20,7 @@
     "lint": "$(npm bin)/standard",
     "preversion": "npm run build",
     "test": "npm run lint && npm run unit",
-    "unit": "$(npm bin)/mocha './src/*-unit.js' --reporter spec --require babel-register testutils.js"
+    "unit": "$(npm bin)/mocha './src/*-unit.js' --reporter spec --require @babel/register testutils.js"
   },
   "dependencies": {
     "emailjs-base64": "^1.1.4",
@@ -31,6 +31,7 @@
     "@babel/cli": "^7.20.7",
     "@babel/core": "^7.20.7",
     "@babel/preset-env": "^7.20.2",
+    "@babel/register": "^7.18.9",
     "chai": "^4.3.7",
     "mocha": "^10.2.0",
     "pre-commit": "^1.2.2",
