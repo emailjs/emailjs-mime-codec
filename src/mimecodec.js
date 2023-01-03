@@ -45,10 +45,10 @@ export function mimeEncode (data = '', fromCharset = 'UTF-8') {
  */
 export function mimeDecode (str = '', fromCharset = 'UTF-8') {
   const encodedBytesCount = (str.match(/=[\da-fA-F]{2}/g) || []).length
-  let buffer = new Uint8Array(str.length - encodedBytesCount * 2)
+  const buffer = new Uint8Array(str.length - encodedBytesCount * 2)
 
-  for (var i = 0, len = str.length, bufferPos = 0; i < len; i++) {
-    let hex = str.substr(i + 1, 2)
+  for (let i = 0, len = str.length, bufferPos = 0; i < len; i++) {
+    const hex = str.substr(i + 1, 2)
     const chr = str.charAt(i)
     if (chr === '=' && hex && /[\da-fA-F]{2}/.test(hex)) {
       buffer[bufferPos++] = parseInt(hex, 16)
@@ -135,7 +135,7 @@ export function mimeWordEncode (data, mimeWordEncoding = 'Q', fromCharset = 'UTF
 
   if (mimeWordEncoding === 'Q') {
     const str = (typeof data === 'string') ? data : decode(data, fromCharset)
-    let encodedStr = pipe(mimeEncode, qEncodeForbiddenHeaderChars)(str)
+    const encodedStr = pipe(mimeEncode, qEncodeForbiddenHeaderChars)(str)
     parts = encodedStr.length < MAX_MIME_WORD_LENGTH ? [encodedStr] : _splitMimeEncodedString(encodedStr, MAX_MIME_WORD_LENGTH)
   } else {
     // Fits as much as possible into every line without breaking utf-8 multibyte characters' octets up across lines
@@ -279,7 +279,7 @@ export function foldLines (str = '', afterSpace) {
  * @return {String} encoded and folded header line
  */
 export function headerLineEncode (key, value, fromCharset) {
-  var encodedValue = mimeWordsEncode(value, 'Q', fromCharset)
+  const encodedValue = mimeWordsEncode(value, 'Q', fromCharset)
   return foldLines(key + ': ' + encodedValue)
 }
 
@@ -349,7 +349,7 @@ export function headerLinesDecode (headers) {
  * @return {Object} Header value as a parsed structure
  */
 export function parseHeaderValue (str) {
-  let response = {
+  const response = {
     value: false,
     params: {}
   }
@@ -410,7 +410,7 @@ export function parseHeaderValue (str) {
 
   // preprocess values
   Object.keys(response.params).forEach(function (key) {
-    var actualKey, nr, match, value
+    let actualKey, nr, match, value
     if ((match = key.match(/(\*(\d+)|\*(\d+)\*|\*)$/))) {
       actualKey = key.substr(0, match.index)
       nr = Number(match[2] || match[3]) || 0
@@ -438,7 +438,7 @@ export function parseHeaderValue (str) {
 
   // concatenate split rfc2231 strings and convert encoded strings to mime encoded words
   Object.keys(response.params).forEach(function (key) {
-    var value
+    let value
     if (response.params[key] && Array.isArray(response.params[key].values)) {
       value = response.params[key].values.map(function (val) {
         return val || ''
@@ -449,7 +449,7 @@ export function parseHeaderValue (str) {
         response.params[key] = '=?' + response.params[key].charset + '?Q?' + value
           .replace(/[=?_\s]/g, function (s) {
             // fix invalidly encoded chars
-            var c = s.charCodeAt(0).toString(16)
+            const c = s.charCodeAt(0).toString(16)
             return s === ' ' ? '_' : '%' + (c.length < 2 ? '0' : '') + c
           })
           .replace(/%/g, '=') + '?=' // change from urlencoding to percent encoding
@@ -479,8 +479,8 @@ export function parseHeaderValue (str) {
  */
 export function continuationEncode (key, data, maxLength, fromCharset) {
   const list = []
-  var encodedStr = typeof data === 'string' ? data : decode(data, fromCharset)
-  var line
+  let encodedStr = typeof data === 'string' ? data : decode(data, fromCharset)
+  let line
 
   maxLength = maxLength || 50
 
@@ -489,7 +489,7 @@ export function continuationEncode (key, data, maxLength, fromCharset) {
     // check if conversion is even needed
     if (encodedStr.length <= maxLength) {
       return [{
-        key: key,
+        key,
         value: /[\s";=]/.test(encodedStr) ? '"' + encodedStr + '"' : encodedStr
       }]
     }
@@ -523,7 +523,7 @@ export function continuationEncode (key, data, maxLength, fromCharset) {
         break
       }
       list.push({
-        line: line,
+        line,
         encoded: true
       })
       i += line.length

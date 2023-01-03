@@ -15,21 +15,21 @@ import {
 
 describe('#mimeEncode', function () {
   it('shoud encode UTF-8', function () {
-    var str = 'tere ÕÄÖÕ',
+    const str = 'tere ÕÄÖÕ',
       encodedStr = 'tere =C3=95=C3=84=C3=96=C3=95'
 
     expect(mimeEncode(str)).to.equal(encodedStr)
   })
 
   it('shoud encode trailing whitespace', function () {
-    var str = 'tere  ',
+    const str = 'tere  ',
       encodedStr = 'tere =20'
 
     expect(mimeEncode(str)).to.equal(encodedStr)
   })
 
   it('shoud encode non UTF-8', function () {
-    var buf = new Uint8Array([0xBD, 0xC5]),
+    const buf = new Uint8Array([0xBD, 0xC5]),
       encoding = 'ks_c_5601-1987',
       encodedStr = '=EC=8B=A0'
 
@@ -39,14 +39,14 @@ describe('#mimeEncode', function () {
 
 describe('#mimeDecode', function () {
   it('should decode UTF-8', function () {
-    var str = 'tere ÕÄÖÕ',
+    const str = 'tere ÕÄÖÕ',
       encodedStr = 'tere =C3=95=C3=84=C3=96=C3=95'
 
     expect(mimeDecode(encodedStr)).to.equal(str)
   })
 
   it('should decode non UTF-8', function () {
-    var str = '신',
+    const str = '신',
       encoding = 'ks_c_5601-1987',
       encodedStr = '=BD=C5'
 
@@ -56,28 +56,28 @@ describe('#mimeDecode', function () {
 
 describe('#base64Encode', function () {
   it('should base64Encode a UTF-8 string', function () {
-    var str = 'tere ÕÄÖÕ',
+    const str = 'tere ÕÄÖÕ',
       encodedStr = 'dGVyZSDDlcOEw5bDlQ=='
 
     expect(base64Encode(str)).to.equal(encodedStr)
   })
 
   it('should base64Encode an ASCII string', function () {
-    var str = 'bliblablubb',
+    const str = 'bliblablubb',
       encodedStr = 'YmxpYmxhYmx1YmI='
 
     expect(base64Encode(str, 'binary')).to.equal(encodedStr)
   })
 
   it('should base64Encode a UTF-8 typed array', function () {
-    var buf = new Uint8Array([116, 101, 114, 101, 32, 195, 149, 195, 132, 195, 150, 195, 149]),
+    const buf = new Uint8Array([116, 101, 114, 101, 32, 195, 149, 195, 132, 195, 150, 195, 149]),
       encodedStr = 'dGVyZSDDlcOEw5bDlQ=='
 
     expect(base64Encode(buf)).to.equal(encodedStr)
   })
 
   it('should base64Encode non UTF-8 typed array', function () {
-    var buf = new Uint8Array([0xBD, 0xC5]),
+    const buf = new Uint8Array([0xBD, 0xC5]),
       encoding = 'ks_c_5601-1987',
       encodedStr = '7Iug'
 
@@ -87,14 +87,14 @@ describe('#base64Encode', function () {
 
 describe('#base64Decode', function () {
   it('should decode UTF-8', function () {
-    var str = 'tere ÕÄÖÕ',
+    const str = 'tere ÕÄÖÕ',
       encodedStr = 'dGVyZSDDlcOEw5bDlQ=='
 
     expect(base64Decode(encodedStr)).to.equal(str)
   })
 
   it('should decode non UTF-8', function () {
-    var str = '신',
+    const str = '신',
       encoding = 'ks_c_5601-1987',
       encodedStr = 'vcU='
 
@@ -119,14 +119,14 @@ describe('#base64Decode', function () {
 
 describe('#quotedPrintableEncode', function () {
   it('should encode UTF-8 to quoted-printable', function () {
-    var str = 'tere ÕÄ \t\nÕÄ \t\nÖÕ',
+    const str = 'tere ÕÄ \t\nÕÄ \t\nÖÕ',
       encodedStr = 'tere =C3=95=C3=84 =09\r\n=C3=95=C3=84 =09\r\n=C3=96=C3=95'
 
     expect(quotedPrintableEncode(str)).to.equal(encodedStr)
   })
 
   it('should add soft line breaks', function () {
-    var str = 'õäöüõäöüõäöüõäöüõäöüõäöüõäöõ',
+    const str = 'õäöüõäöüõäöüõäöüõäöüõäöüõäöõ',
       encodedStr = '=C3=B5=C3=A4=C3=B6=C3=BC=C3=B5=C3=A4=C3=B6=C3=BC=C3=B5=C3=A4=C3=B6=C3=BC=\r\n' +
                     '=C3=B5=C3=A4=C3=B6=C3=BC=C3=B5=C3=A4=C3=B6=C3=BC=C3=B5=C3=A4=C3=B6=C3=BC=\r\n' +
                     '=C3=B5=C3=A4=C3=B6=C3=B5'
@@ -141,13 +141,13 @@ describe('#quotedPrintableEncode', function () {
   })
 
   it('should not wrap between encoded chars', function () {
-    var wrapped = 'a==========================',
+    const wrapped = 'a==========================',
       wrappedEncoded = 'a=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=\r\n=3D=3D'
     expect(wrappedEncoded).to.equal(quotedPrintableEncode(wrapped))
   })
 
   it('should encode long string', function () {
-    var longLine = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
+    const longLine = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
                     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
                     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
                     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
@@ -160,13 +160,13 @@ describe('#quotedPrintableEncode', function () {
   })
 
   it('should quote at line edge', function () {
-    var str = 'Title: <a href="http://www.elezea.com/2012/09/iphone-5-local-maximum/">The future of e-commerce is storytelling</a> <br>',
+    const str = 'Title: <a href="http://www.elezea.com/2012/09/iphone-5-local-maximum/">The future of e-commerce is storytelling</a> <br>',
       strEncoded = 'Title: <a href=3D"http://www.elezea.com/2012/09/iphone-5-local-maximum/">Th=\r\ne future of e-commerce is storytelling</a> <br>'
     expect(strEncoded).to.equal(quotedPrintableEncode(str))
   })
 
   it('should wrap long string with UTF-8 sequence on edge', function () {
-    var longLine = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
+    const longLine = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
                     'ABCDEFGHIÄÄÄPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
                     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
                     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
@@ -185,14 +185,14 @@ describe('#quotedPrintableEncode', function () {
 
 describe('#quotedPrintableDecode', function () {
   it('should decode quoted-printable to UTF-8', function () {
-    var str = 'tere ÕÄ \t\r\nÕÄ \t\r\nÖÕ',
+    const str = 'tere ÕÄ \t\r\nÕÄ \t\r\nÖÕ',
       encodedStr = 'tere =C3=95=C3=84=20=09\r\n=C3=95=\r\n=C3=84=\r\n=20=09\r\n=C3=96=C3=95='
 
     expect(quotedPrintableDecode(encodedStr)).to.equal(str)
   })
 
   it('should decode string', function () {
-    var longLine = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
+    const longLine = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
                     'ABCDEFGHIÄÄÄPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
                     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
                     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
@@ -205,7 +205,7 @@ describe('#quotedPrintableDecode', function () {
   })
 
   it('should decode string with soft linebreaks', function () {
-    var input = 'Tere =\r\nvana kere=',
+    const input = 'Tere =\r\nvana kere=',
       output = 'Tere vana kere'
 
     expect(output).to.equal(quotedPrintableDecode(input))
@@ -246,7 +246,7 @@ describe('#mimeWordEncode', function () {
 
 describe('#mimeWordsEncode', function () {
   it('should encode Ascii range', function () {
-    var input1 = 'метель" вьюга',
+    const input1 = 'метель" вьюга',
       input2 = 'метель\'вьюга',
       input3 = 'Verão você vai adorar!',
       output1 = '=?UTF-8?Q?=D0=BC=D0=B5=D1=82=D0=B5=D0=BB=D1=8C=22_=D0=B2=D1=8C?= =?UTF-8?Q?=D1=8E=D0=B3=D0=B0?=',
@@ -275,7 +275,7 @@ describe('#mimeWordsDecode', function () {
   })
 
   it('should decode ascii range', function () {
-    var input1 = 'метель" вьюга',
+    const input1 = 'метель" вьюга',
       input2 = 'метель\'вьюга',
       output1 = '=?UTF-8?Q?=D0=BC=D0=B5=D1=82=D0=B5=D0=BB=D1=8C=22_?= =?UTF-8?Q?=D0=B2=D1=8C=D1=8E=D0=B3=D0=B0?=',
       output2 = '=?UTF-8?Q?=D0=BC=D0=B5=D1=82=D0=B5=D0=BB=D1=8C\'?= =?UTF-8?Q?=D0=B2=D1=8C=D1=8E=D0=B3=D0=B0?='
@@ -285,7 +285,7 @@ describe('#mimeWordsDecode', function () {
   })
 
   it('should decode empty string', function () {
-    var encoded1 = '=?UTF-8?Q??=',
+    const encoded1 = '=?UTF-8?Q??=',
       encoded2 = '=?UTF-8?B??='
 
     expect(mimeWordsDecode(encoded1)).to.equal('')
@@ -314,7 +314,7 @@ describe('#mimeWordsDecode', function () {
   })
 
   it('should split QP on maxLength', function () {
-    var inputStr = 'Jõgeva Jõgeva Jõgeva mugeva Jõgeva Jõgeva Jõgeva Jõgeva Jõgeva',
+    const inputStr = 'Jõgeva Jõgeva Jõgeva mugeva Jõgeva Jõgeva Jõgeva Jõgeva Jõgeva',
       outputStr = '=?UTF-8?Q?J=C3=B5geva_J=C3=B5geva_J=C3=B5geva?= mugeva =?UTF-8?Q?J=C3=B5geva_J=C3=B5geva_J=C3=B5geva_J=C3=B5geva_J?= =?UTF-8?Q?=C3=B5geva?=',
       encoded = mimeWordsEncode(inputStr, 'Q')
 
@@ -368,11 +368,11 @@ describe('#continuationEncode', function () {
   })
 
   it('should encode and decode', function () {
-    var input = 'Lorěm ipsum doloř siť amet, háš peřpetua compřéhenšam at, ei nám modó soleát éxpétěndá! Boňorum vocibůs dignisšim pro ad, ea sensibus efficiendi intellegam ius. Ad nam aperiam delicata voluptaria, vix nobis luptatum ea, ců úsú graeco viďiššě ňusqúam. '
-    var headerLine = 'content-disposition: attachment; ' + continuationEncode('filename', input, 50).map(function (item) {
+    const input = 'Lorěm ipsum doloř siť amet, háš peřpetua compřéhenšam at, ei nám modó soleát éxpétěndá! Boňorum vocibůs dignisšim pro ad, ea sensibus efficiendi intellegam ius. Ad nam aperiam delicata voluptaria, vix nobis luptatum ea, ců úsú graeco viďiššě ňusqúam. '
+    const headerLine = 'content-disposition: attachment; ' + continuationEncode('filename', input, 50).map(function (item) {
       return item.key + '="' + item.value + '"'
     }).join('; ')
-    var parsedHeader = parseHeaderValue(headerLine)
+    const parsedHeader = parseHeaderValue(headerLine)
     expect(input).to.equal(mimeWordsDecode(parsedHeader.params.filename))
   })
 
@@ -386,7 +386,7 @@ describe('#continuationEncode', function () {
 
 describe('#foldLines', function () {
   it('should Fold long header line', function () {
-    var inputStr = 'Subject: Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas jušla kušla tušla musla',
+    const inputStr = 'Subject: Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas jušla kušla tušla musla',
       outputStr = 'Subject: Testin command line kirja =?UTF-8?Q?=C3=B5kva?= kakva\r\n' +
                     ' =?UTF-8?Q?m=C3=B5ni_t=C3=B5nis_k=C3=B5llas_p=C3=B5llas_t=C3=B5?=\r\n' +
                     ' =?UTF-8?Q?llas_r=C3=B5llas_ju=C5=A1la_ku=C5=A1la_tu=C5=A1la?= musla',
@@ -396,7 +396,7 @@ describe('#foldLines', function () {
   })
 
   it('should Fold flowed text', function () {
-    var inputStr = 'Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas jušla kušla tušla musla Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas jušla kušla tušla musla',
+    const inputStr = 'Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas jušla kušla tušla musla Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas jušla kušla tušla musla',
       outputStr = 'Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas \r\n' +
                     'jušla kušla tušla musla Testin command line kirja õkva kakva mõni tõnis \r\n' +
                     'kõllas põllas tõllas rõllas jušla kušla tušla musla'
@@ -405,7 +405,7 @@ describe('#foldLines', function () {
   })
 
   it('should fold one long line', function () {
-    var inputStr = 'Subject: =?UTF-8?Q?=CB=86=C2=B8=C3=81=C3=8C=C3=93=C4=B1=C3=8F=CB=87=C3=81=C3=9B^=C2=B8\\=C3=81=C4=B1=CB=86=C3=8C=C3=81=C3=9B=C3=98^\\=CB=9C=C3=9B=CB=9D=E2=84=A2=CB=87=C4=B1=C3=93=C2=B8^\\=CB=9C=EF=AC=81^\\=C2=B7\\=CB=9C=C3=98^=C2=A3=CB=9C#=EF=AC=81^\\=C2=A3=EF=AC=81^\\=C2=A3=EF=AC=81^\\?=',
+    const inputStr = 'Subject: =?UTF-8?Q?=CB=86=C2=B8=C3=81=C3=8C=C3=93=C4=B1=C3=8F=CB=87=C3=81=C3=9B^=C2=B8\\=C3=81=C4=B1=CB=86=C3=8C=C3=81=C3=9B=C3=98^\\=CB=9C=C3=9B=CB=9D=E2=84=A2=CB=87=C4=B1=C3=93=C2=B8^\\=CB=9C=EF=AC=81^\\=C2=B7\\=CB=9C=C3=98^=C2=A3=CB=9C#=EF=AC=81^\\=C2=A3=EF=AC=81^\\=C2=A3=EF=AC=81^\\?=',
       outputStr = 'Subject:\r\n =?UTF-8?Q?=CB=86=C2=B8=C3=81=C3=8C=C3=93=C4=B1=C3=8F=CB=87=C3=81=C3=9B^=C2=B8\\=C3=81=C4=B1=CB=86=C3=8C=C3=81=C3=9B=C3=98^\\=CB=9C=C3=9B=CB=9D=E2=84=A2=CB=87=C4=B1=C3=93=C2=B8^\\=CB=9C=EF=AC=81^\\=C2=B7\\=CB=9C=C3=98^=C2=A3=CB=9C#=EF=AC=81^\\=C2=A3=EF=AC=81^\\=C2=A3=EF=AC=81^\\?='
 
     expect(outputStr).to.equal(foldLines(inputStr))
@@ -414,7 +414,7 @@ describe('#foldLines', function () {
 
 describe('#headerLineEncode', function () {
   it('should encode and fold header line', function () {
-    var key = 'Subject',
+    const key = 'Subject',
       value = 'Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas jušla kušla tušla musla',
       outputStr = 'Subject: Testin command line kirja =?UTF-8?Q?=C3=B5kva?= kakva\r\n' +
         ' =?UTF-8?Q?m=C3=B5ni_t=C3=B5nis_k=C3=B5llas_p=C3=B5llas_t=C3=B5?=\r\n' +
@@ -427,8 +427,8 @@ describe('#headerLineEncode', function () {
 
 describe('#headerLinesDecode', function () {
   it('should decode headers', function () {
-    var headersObj = {
-        'subject': 'Tere =?UTF-8?Q?J=C3=B5geva?=',
+    const headersObj = {
+        subject: 'Tere =?UTF-8?Q?J=C3=B5geva?=',
         'x-app': ['My =?UTF-8?Q?=C5=A1=C5=A1=C5=A1=C5=A1?= app line 1', 'My =?UTF-8?Q?=C5=A1=C5=A1=C5=A1=C5=A1?= app line 2'],
         'long-line': 'tere =?UTF-8?Q?=C3=B5klva?= karu =?UTF-8?Q?m=C3=B5kva_=C5=A1apaka=C5=A1?= tutikas suur maja, =?UTF-8?Q?k=C3=B5rge?= hoone, segane jutt'
       },
@@ -445,7 +445,7 @@ describe('#headerLinesDecode', function () {
 
 describe('#parseHeaderValue', function () {
   it('should handle default value only', function () {
-    var str = 'text/plain',
+    const str = 'text/plain',
       obj = {
         value: 'text/plain',
         params: {}
@@ -455,12 +455,12 @@ describe('#parseHeaderValue', function () {
   })
 
   it('should handle unquoted params', function () {
-    var str = 'text/plain; CHARSET= UTF-8; format=flowed;',
+    const str = 'text/plain; CHARSET= UTF-8; format=flowed;',
       obj = {
         value: 'text/plain',
         params: {
-          'charset': 'UTF-8',
-          'format': 'flowed'
+          charset: 'UTF-8',
+          format: 'flowed'
         }
       }
 
@@ -468,12 +468,12 @@ describe('#parseHeaderValue', function () {
   })
 
   it('should handle quoted params', function () {
-    var str = 'text/plain; filename= ";;;\\""; format=flowed;',
+    const str = 'text/plain; filename= ";;;\\""; format=flowed;',
       obj = {
         value: 'text/plain',
         params: {
-          'filename': ';;;"',
-          'format': 'flowed'
+          filename: ';;;"',
+          format: 'flowed'
         }
       }
 
@@ -481,7 +481,7 @@ describe('#parseHeaderValue', function () {
   })
 
   it('should handle multi line values', function () {
-    var str = 'text/plain; single_encoded*="UTF-8\'\'%C3%95%C3%84%C3%96%C3%9C";\n' +
+    const str = 'text/plain; single_encoded*="UTF-8\'\'%C3%95%C3%84%C3%96%C3%9C";\n' +
                     ' multi_encoded*0*=UTF-8\'\'%C3%96%C3%9C;\n' +
                     ' multi_encoded*1*=%C3%95%C3%84;\n' +
                     ' no_charset*0=OA;\n' +
@@ -490,10 +490,10 @@ describe('#parseHeaderValue', function () {
       obj = {
         value: 'text/plain',
         params: {
-          'single_encoded': '=?UTF-8?Q?=C3=95=C3=84=C3=96=C3=9C?=',
-          'multi_encoded': '=?UTF-8?Q?=C3=96=C3=9C=C3=95=C3=84?=',
-          'no_charset': 'OAOU',
-          'invalid': '=?utf-8?Q?_=5f=3f\'=3d=ab?='
+          single_encoded: '=?UTF-8?Q?=C3=95=C3=84=C3=96=C3=9C?=',
+          multi_encoded: '=?UTF-8?Q?=C3=96=C3=9C=C3=95=C3=84?=',
+          no_charset: 'OAOU',
+          invalid: '=?utf-8?Q?_=5f=3f\'=3d=ab?='
         }
       }
 
