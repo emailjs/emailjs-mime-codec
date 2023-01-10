@@ -20,7 +20,7 @@
     "lint": "$(npm bin)/standard",
     "preversion": "npm run build",
     "test": "npm run lint && npm run unit",
-    "unit": "$(npm bin)/mocha './src/*-unit.js' --reporter spec --require @babel/register testutils.js"
+    "unit": "$(npm bin)/mocha './src/*.unit.js' --reporter spec --require @babel/register testutils.js"
   },
   "dependencies": {
     "emailjs-base64": "^1.1.4",
