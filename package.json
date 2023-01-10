@@ -17,7 +17,7 @@
   "author": "Andris Reinman <andris@kreata.ee>",
   "scripts": {
     "build": "./scripts/build.sh",
-    "lint": "npx standard",
+    "lint": "npx ts-standard",
     "preversion": "npm run build",
     "test": "npm run lint && npm run unit",
     "unit": "npx ts-mocha './src/*.unit.ts' --reporter spec --require @babel/register"
@@ -41,6 +41,7 @@
     "pre-commit": "^1.2.2",
     "standard": "^17.0.0",
     "ts-mocha": "^10.0.0",
+    "ts-standard": "^12.0.2",
     "typescript": "^4.9.4"
   },
   "standard": {
