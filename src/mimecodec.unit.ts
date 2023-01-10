@@ -1,5 +1,6 @@
 /* eslint-disable one-var, no-tabs */
 
+import { expect } from 'chai'
 import {
   mimeEncode, mimeDecode,
   base64Encode, base64Decode,
