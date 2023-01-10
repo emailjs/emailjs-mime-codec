@@ -2,11 +2,16 @@
 
 import { expect } from 'chai'
 import {
-  mimeEncode, mimeDecode,
-  base64Encode, base64Decode,
-  quotedPrintableEncode, quotedPrintableDecode,
-  mimeWordEncode, mimeWordDecode,
-  mimeWordsEncode, mimeWordsDecode,
+  mimeEncode,
+  mimeDecode,
+  base64Encode,
+  base64Decode,
+  quotedPrintableEncode,
+  quotedPrintableDecode,
+  mimeWordEncode,
+  mimeWordDecode,
+  mimeWordsEncode,
+  mimeWordsDecode,
   foldLines,
   continuationEncode,
   headerLineEncode,
@@ -30,7 +35,7 @@ describe('#mimeEncode', function () {
   })
 
   it('shoud encode non UTF-8', function () {
-    const buf = new Uint8Array([0xBD, 0xC5]),
+    const buf = new Uint8Array([0xbd, 0xc5]),
       encoding = 'ks_c_5601-1987',
       encodedStr = '=EC=8B=A0'
 
@@ -78,7 +83,7 @@ describe('#base64Encode', function () {
   })
 
   it('should base64Encode non UTF-8 typed array', function () {
-    const buf = new Uint8Array([0xBD, 0xC5]),
+    const buf = new Uint8Array([0xbd, 0xc5]),
       encoding = 'ks_c_5601-1987',
       encodedStr = '7Iug'
 
@@ -103,7 +108,8 @@ describe('#base64Decode', function () {
   })
 
   it('should decode binary b64', () => {
-    const text = 'MIIB3AYJKoZIhvcNAQcDoIIBzTCCAckCAQIxggFuMIIBagIBADAjMB4xHDAJBgNVBAYTAlJVMA8G\n' +
+    const text =
+      'MIIB3AYJKoZIhvcNAQcDoIIBzTCCAckCAQIxggFuMIIBagIBADAjMB4xHDAJBgNVBAYTAlJVMA8G\n' +
       'A1UEAx4IAFQAZQBzAHQCAQEwPAYJKoZIhvcNAQEHMC+gDzANBglghkgBZQMEAgMFAKEcMBoGCSqG\n' +
       'SIb3DQEBCDANBglghkgBZQMEAgMFAASCAQBDyepahKyM+hceeF7J+pyiSVYLElKyFKff9flMs1VX\n' +
       'ZaBQRcEYpIqw9agD4u+aHlIOJ6AtdCbxaV0M8q6gjM4E5lUFUOqG/QIycdG2asZ0lza/DL8SdxfA\n' +
@@ -128,17 +134,22 @@ describe('#quotedPrintableEncode', function () {
 
   it('should add soft line breaks', function () {
     const str = 'õäöüõäöüõäöüõäöüõäöüõäöüõäöõ',
-      encodedStr = '=C3=B5=C3=A4=C3=B6=C3=BC=C3=B5=C3=A4=C3=B6=C3=BC=C3=B5=C3=A4=C3=B6=C3=BC=\r\n' +
-                    '=C3=B5=C3=A4=C3=B6=C3=BC=C3=B5=C3=A4=C3=B6=C3=BC=C3=B5=C3=A4=C3=B6=C3=BC=\r\n' +
-                    '=C3=B5=C3=A4=C3=B6=C3=B5'
+      encodedStr =
+        '=C3=B5=C3=A4=C3=B6=C3=BC=C3=B5=C3=A4=C3=B6=C3=BC=C3=B5=C3=A4=C3=B6=C3=BC=\r\n' +
+        '=C3=B5=C3=A4=C3=B6=C3=BC=C3=B5=C3=A4=C3=B6=C3=BC=C3=B5=C3=A4=C3=B6=C3=BC=\r\n' +
+        '=C3=B5=C3=A4=C3=B6=C3=B5'
 
     expect(quotedPrintableEncode(str)).to.equal(encodedStr)
   })
 
   it('should encode short string', function () {
-    expect('Tere =C3=95=C3=84=C3=96=C3=9C!').to.equal(quotedPrintableEncode(new Uint8Array([0x54, 0x65, 0x72, 0x65, 0x20, 0xD5, 0xC4, 0xD6, 0xDC, 0x21]), 'Latin_1'))
+    expect('Tere =C3=95=C3=84=C3=96=C3=9C!').to.equal(
+      quotedPrintableEncode(new Uint8Array([0x54, 0x65, 0x72, 0x65, 0x20, 0xd5, 0xc4, 0xd6, 0xdc, 0x21]), 'Latin_1')
+    )
     expect('Tere =C3=95=C3=84=C3=96=C3=9C=C5=A0=C5=BD!').to.equal(quotedPrintableEncode('Tere ÕÄÖÜŠŽ!'))
-    expect('Tere =C5=A0=C5=BD!').to.equal(quotedPrintableEncode(new Uint8Array([0x54, 0x65, 0x72, 0x65, 0x20, 0xD0, 0xDE, 0x21]), 'Win-1257'))
+    expect('Tere =C5=A0=C5=BD!').to.equal(
+      quotedPrintableEncode(new Uint8Array([0x54, 0x65, 0x72, 0x65, 0x20, 0xd0, 0xde, 0x21]), 'Win-1257')
+    )
   })
 
   it('should not wrap between encoded chars', function () {
@@ -148,33 +159,39 @@ describe('#quotedPrintableEncode', function () {
   })
 
   it('should encode long string', function () {
-    const longLine = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
-                    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
-                    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
-                    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
-      longLineEncoded = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLM=\r\n' +
-                    'NOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ=\r\n' +
-                    'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklm=\r\n' +
-                    'nopqrstuvwxyz0123456789'
+    const longLine =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+      longLineEncoded =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLM=\r\n' +
+        'NOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ=\r\n' +
+        'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklm=\r\n' +
+        'nopqrstuvwxyz0123456789'
 
     expect(longLineEncoded).to.equal(quotedPrintableEncode(longLine))
   })
 
   it('should quote at line edge', function () {
-    const str = 'Title: <a href="http://www.elezea.com/2012/09/iphone-5-local-maximum/">The future of e-commerce is storytelling</a> <br>',
-      strEncoded = 'Title: <a href=3D"http://www.elezea.com/2012/09/iphone-5-local-maximum/">Th=\r\ne future of e-commerce is storytelling</a> <br>'
+    const str =
+        'Title: <a href="http://www.elezea.com/2012/09/iphone-5-local-maximum/">The future of e-commerce is storytelling</a> <br>',
+      strEncoded =
+        'Title: <a href=3D"http://www.elezea.com/2012/09/iphone-5-local-maximum/">Th=\r\ne future of e-commerce is storytelling</a> <br>'
     expect(strEncoded).to.equal(quotedPrintableEncode(str))
   })
 
   it('should wrap long string with UTF-8 sequence on edge', function () {
-    const longLine = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
-                    'ABCDEFGHIÄÄÄPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
-                    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
-                    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
-      longLineEncoded = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHI=\r\n' +
-                    '=C3=84=C3=84=C3=84PQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJ=\r\n' +
-                    'KLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVW=\r\n' +
-                    'XYZabcdefghijklmnopqrstuvwxyz0123456789'
+    const longLine =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
+        'ABCDEFGHIÄÄÄPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+      longLineEncoded =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHI=\r\n' +
+        '=C3=84=C3=84=C3=84PQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJ=\r\n' +
+        'KLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVW=\r\n' +
+        'XYZabcdefghijklmnopqrstuvwxyz0123456789'
     expect(longLineEncoded).to.equal(quotedPrintableEncode(longLine))
   })
 
@@ -193,14 +210,16 @@ describe('#quotedPrintableDecode', function () {
   })
 
   it('should decode string', function () {
-    const longLine = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
-                    'ABCDEFGHIÄÄÄPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
-                    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
-                    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
-      longLineEncoded = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHI=\r\n' +
-                    '=C3=84=C3=84=C3=84PQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJ=\r\n' +
-                    'KLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVW=\r\n' +
-                    'XYZabcdefghijklmnopqrstuvwxyz0123456789'
+    const longLine =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
+        'ABCDEFGHIÄÄÄPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+      longLineEncoded =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHI=\r\n' +
+        '=C3=84=C3=84=C3=84PQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJ=\r\n' +
+        'KLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVW=\r\n' +
+        'XYZabcdefghijklmnopqrstuvwxyz0123456789'
 
     expect(longLine).to.equal(quotedPrintableDecode(longLineEncoded))
   })
@@ -223,15 +242,20 @@ describe('#mimeWordEncode', function () {
   })
 
   it('should QP-encode mime word', function () {
-    expect('=?UTF-8?Q?J=C3=B5ge-va=C5=BD?=').to.equal(mimeWordEncode(new Uint8Array([0x4A, 0xF5, 0x67, 0x65, 0x2D, 0x76, 0x61, 0xDE]), 'Q', 'iso-8859-13'))
+    expect('=?UTF-8?Q?J=C3=B5ge-va=C5=BD?=').to.equal(
+      mimeWordEncode(new Uint8Array([0x4a, 0xf5, 0x67, 0x65, 0x2d, 0x76, 0x61, 0xde]), 'Q', 'iso-8859-13')
+    )
   })
 
   it('should Base64-encode mime word', () => {
-    expect(mimeWordEncode('Привет и до свидания', 'B')).to.equal('=?UTF-8?B?0J/RgNC40LLQtdGCINC4INC00L4g0YHQstC40LTQsNC90LjRjw==?=')
+    expect(mimeWordEncode('Привет и до свидания', 'B')).to.equal(
+      '=?UTF-8?B?0J/RgNC40LLQtdGCINC4INC00L4g0YHQstC40LTQsNC90LjRjw==?='
+    )
   })
 
   it('should Base64-encode a long mime word', () => {
-    const payload = 'üöß‹€Привет и до свиданияПривет и до свиданияПривет и до свиданияПривет и до свиданияПривет и до свиданияПривет и до свиданияПривет и до свиданияПривет и до свидания'
+    const payload =
+      'üöß‹€Привет и до свиданияПривет и до свиданияПривет и до свиданияПривет и до свиданияПривет и до свиданияПривет и до свиданияПривет и до свиданияПривет и до свидания'
     const expected =
       '=?UTF-8?B?w7zDtsOf4oC54oKs0J/RgNC40LLQtdGCINC4INC00L4g0YHQstC4?= ' +
       '=?UTF-8?B?0LTQsNC90LjRj9Cf0YDQuNCy0LXRgiDQuCDQtNC+INGB0LLQuNC0?= ' +
@@ -248,7 +272,7 @@ describe('#mimeWordEncode', function () {
 describe('#mimeWordsEncode', function () {
   it('should encode Ascii range', function () {
     const input1 = 'метель" вьюга',
-      input2 = 'метель\'вьюга',
+      input2 = "метель'вьюга",
       input3 = 'Verão você vai adorar!',
       output1 = '=?UTF-8?Q?=D0=BC=D0=B5=D1=82=D0=B5=D0=BB=D1=8C=22_=D0=B2=D1=8C?= =?UTF-8?Q?=D1=8E=D0=B3=D0=B0?=',
       output2 = '=?UTF-8?Q?=D0=BC=D0=B5=D1=82=D0=B5=D0=BB=D1=8C=27=D0=B2=D1=8C?= =?UTF-8?Q?=D1=8E=D0=B3=D0=B0?=',
@@ -267,7 +291,11 @@ describe('#mimeWordsDecode', function () {
   })
 
   it('should decode mime words', function () {
-    expect('Jõge-vaŽ zz Jõge-vaŽJõge-vaŽJõge-vaŽ').to.equal(mimeWordsDecode('=?ISO-8859-13?Q?J=F5ge-va=DE?= zz =?ISO-8859-13?Q?J=F5ge-va=DE?= =?ISO-8859-13?Q?J=F5ge-va=DE?= =?ISO-8859-13?Q?J=F5ge-va=DE?='))
+    expect('Jõge-vaŽ zz Jõge-vaŽJõge-vaŽJõge-vaŽ').to.equal(
+      mimeWordsDecode(
+        '=?ISO-8859-13?Q?J=F5ge-va=DE?= zz =?ISO-8859-13?Q?J=F5ge-va=DE?= =?ISO-8859-13?Q?J=F5ge-va=DE?= =?ISO-8859-13?Q?J=F5ge-va=DE?='
+      )
+    )
     expect('Sssś Lałalalala').to.equal(mimeWordsDecode('=?UTF-8?B?U3NzxZsgTGHFgmFsYQ==?= =?UTF-8?B?bGFsYQ==?='))
   })
 
@@ -277,9 +305,9 @@ describe('#mimeWordsDecode', function () {
 
   it('should decode ascii range', function () {
     const input1 = 'метель" вьюга',
-      input2 = 'метель\'вьюга',
+      input2 = "метель'вьюга",
       output1 = '=?UTF-8?Q?=D0=BC=D0=B5=D1=82=D0=B5=D0=BB=D1=8C=22_?= =?UTF-8?Q?=D0=B2=D1=8C=D1=8E=D0=B3=D0=B0?=',
-      output2 = '=?UTF-8?Q?=D0=BC=D0=B5=D1=82=D0=B5=D0=BB=D1=8C\'?= =?UTF-8?Q?=D0=B2=D1=8C=D1=8E=D0=B3=D0=B0?='
+      output2 = "=?UTF-8?Q?=D0=BC=D0=B5=D1=82=D0=B5=D0=BB=D1=8C'?= =?UTF-8?Q?=D0=B2=D1=8C=D1=8E=D0=B3=D0=B0?="
 
     expect(mimeWordsDecode(output1)).to.equal(input1)
     expect(mimeWordsDecode(output2)).to.equal(input2)
@@ -294,29 +322,52 @@ describe('#mimeWordsDecode', function () {
   })
 
   it('should join bytes of Base64 multi-byte UTF-8 characters before parsing', function () {
-    expect('GLG: Regulation of Taxi in China - 张一兵').to.equal(mimeWordsDecode('=?utf-8?B?R0xHOiBSZWd1bGF0aW9uIG9mIFRheGkgaW4gQ2hpbmEgLSDl?= =?utf-8?B?vKDkuIDlhbU=?='))
-    expect('***SPAM*** Очки виртуальной реальности').to.equal(mimeWordsDecode('***SPAM*** =?utf-8?B?0J7Rh9C60Lgg0LLQuNGA0YLRg9Cw0LvRjNC90L7QuSDR?=\r\n	=?utf-8?B?gNC10LDQu9GM0L3QvtGB0YLQuA==?='))
+    expect('GLG: Regulation of Taxi in China - 张一兵').to.equal(
+      mimeWordsDecode('=?utf-8?B?R0xHOiBSZWd1bGF0aW9uIG9mIFRheGkgaW4gQ2hpbmEgLSDl?= =?utf-8?B?vKDkuIDlhbU=?=')
+    )
+    expect('***SPAM*** Очки виртуальной реальности').to.equal(
+      mimeWordsDecode(
+        '***SPAM*** =?utf-8?B?0J7Rh9C60Lgg0LLQuNGA0YLRg9Cw0LvRjNC90L7QuSDR?=\r\n	=?utf-8?B?gNC10LDQu9GM0L3QvtGB0YLQuA==?='
+      )
+    )
   })
 
   it('should join bytes of Quoted-Printable multi-byte UTF-8 characters before parsing', function () {
-    expect('гос (передай кому надо тоже').to.equal(mimeWordsDecode('=?utf-8?Q?=D0=B3=D0=BE=D1=81_?==?utf-8?Q?(=D0=BF=D0=B5=D1=80=D0=B5=D0=B4=D0=B0=D0=B9_=D0=BA=D0=BE=D0?= =?utf-8?Q?=BC=D1=83_=D0=BD=D0=B0=D0=B4=D0=BE_=D1=82=D0=BE=D0=B6=D0=B5?='))
+    expect('гос (передай кому надо тоже').to.equal(
+      mimeWordsDecode(
+        '=?utf-8?Q?=D0=B3=D0=BE=D1=81_?==?utf-8?Q?(=D0=BF=D0=B5=D1=80=D0=B5=D0=B4=D0=B0=D0=B9_=D0=BA=D0=BE=D0?= =?utf-8?Q?=BC=D1=83_=D0=BD=D0=B0=D0=B4=D0=BE_=D1=82=D0=BE=D0=B6=D0=B5?='
+      )
+    )
   })
 
   it('should not join together encoded words with different encodings', function () {
-    expect(' ⏯ Trendy Netflix Redesigns + ✈️ Airport App Challenge').to.equal(mimeWordsDecode('=?utf-8?b?IOKPryBUcmVuZHkgTmV0ZmxpeCBSZWRlc2lnbnMgKyDinIjvuI8g?= =?utf-8?q?Airport_App_Challenge?='))
+    expect(' ⏯ Trendy Netflix Redesigns + ✈️ Airport App Challenge').to.equal(
+      mimeWordsDecode(
+        '=?utf-8?b?IOKPryBUcmVuZHkgTmV0ZmxpeCBSZWRlc2lnbnMgKyDinIjvuI8g?= =?utf-8?q?Airport_App_Challenge?='
+      )
+    )
   })
 
   it('should decode Quoted-Printable with bad line split', function () {
-    expect('гос (передай кому надо тоже').to.equal(mimeWordsDecode('=?utf-8?Q?=D0=B3=D0=BE=D1=81_?==?utf-8?Q?(=D0=BF=D0=B5=D1=80=D0=B5= D0=B4=D0=B0=D0=B9_=D0=BA=D0=BE=D0?= =?utf-8?Q?=BC=D1=83_=D0=BD=D0=B0=D0=B4=D0=BE_=D1=82=D0=BE=D0=B6=D0=B5?='))
+    expect('гос (передай кому надо тоже').to.equal(
+      mimeWordsDecode(
+        '=?utf-8?Q?=D0=B3=D0=BE=D1=81_?==?utf-8?Q?(=D0=BF=D0=B5=D1=80=D0=B5= D0=B4=D0=B0=D0=B9_=D0=BA=D0=BE=D0?= =?utf-8?Q?=BC=D1=83_=D0=BD=D0=B0=D0=B4=D0=BE_=D1=82=D0=BE=D0=B6=D0=B5?='
+      )
+    )
   })
 
   it('should correclty parse this ISO-2022-JP encoded string', function () {
-    expect('ATOK Passport お申し込み完了＆ユーザー登録完了（定額利用サービス）').to.equal(mimeWordsDecode('=?ISO-2022-JP?B?QVRPSyBQYXNzcG9ydCAbJEIkKj89JDc5fiRfNDAbKEI=?= =?ISO-2022-JP?B?GyRCTjshdSVmITwlNiE8RVBPPzQwTjsbKEI=?= =?ISO-2022-JP?B?GyRCIUpEajNbTXhNUSU1ITwlUyU5IUsbKEI=?='))
+    expect('ATOK Passport お申し込み完了＆ユーザー登録完了（定額利用サービス）').to.equal(
+      mimeWordsDecode(
+        '=?ISO-2022-JP?B?QVRPSyBQYXNzcG9ydCAbJEIkKj89JDc5fiRfNDAbKEI=?= =?ISO-2022-JP?B?GyRCTjshdSVmITwlNiE8RVBPPzQwTjsbKEI=?= =?ISO-2022-JP?B?GyRCIUpEajNbTXhNUSU1ITwlUyU5IUsbKEI=?='
+      )
+    )
   })
 
   it('should split QP on maxLength', function () {
     const inputStr = 'Jõgeva Jõgeva Jõgeva mugeva Jõgeva Jõgeva Jõgeva Jõgeva Jõgeva',
-      outputStr = '=?UTF-8?Q?J=C3=B5geva_J=C3=B5geva_J=C3=B5geva?= mugeva =?UTF-8?Q?J=C3=B5geva_J=C3=B5geva_J=C3=B5geva_J=C3=B5geva_J?= =?UTF-8?Q?=C3=B5geva?=',
+      outputStr =
+        '=?UTF-8?Q?J=C3=B5geva_J=C3=B5geva_J=C3=B5geva?= mugeva =?UTF-8?Q?J=C3=B5geva_J=C3=B5geva_J=C3=B5geva_J=C3=B5geva_J?= =?UTF-8?Q?=C3=B5geva?=',
       encoded = mimeWordsEncode(inputStr, 'Q')
 
     expect(outputStr).to.equal(encoded)
@@ -330,84 +381,109 @@ describe('#mimeWordsDecode', function () {
 
 describe('#continuationEncode', function () {
   it('should return quoted', function () {
-    expect([{
-      key: 'title',
-      value: '"this is just a title"'
-    }]).to.deep.equal(continuationEncode('title', 'this is just a title', 500))
+    expect([
+      {
+        key: 'title',
+        value: '"this is just a title"'
+      }
+    ]).to.deep.equal(continuationEncode('title', 'this is just a title', 500))
   })
 
   it('should encode and split ascii', function () {
-    expect([{
-      key: 'title*0',
-      value: '"this "'
-    }, {
-      key: 'title*1',
-      value: '"is ju"'
-    }, {
-      key: 'title*2',
-      value: '"st a "'
-    }, {
-      key: 'title*3',
-      value: 'title'
-    }]).to.deep.equal(continuationEncode('title', 'this is just a title', 5))
+    expect([
+      {
+        key: 'title*0',
+        value: '"this "'
+      },
+      {
+        key: 'title*1',
+        value: '"is ju"'
+      },
+      {
+        key: 'title*2',
+        value: '"st a "'
+      },
+      {
+        key: 'title*3',
+        value: 'title'
+      }
+    ]).to.deep.equal(continuationEncode('title', 'this is just a title', 5))
   })
 
   it('should encode and split unicode', function () {
-    expect([{
-      key: 'title*0*',
-      value: 'utf-8\'\'this%20is%20j'
-    }, {
-      key: 'title*1*',
-      value: 'ust%20a%20title%20'
-    }, {
-      key: 'title*2*',
-      value: '%C3%B5%C3%A4%C3%B6'
-    }, {
-      key: 'title*3*',
-      value: '%C3%BC'
-    }]).to.deep.equal(continuationEncode('title', 'this is just a title õäöü', 20))
+    expect([
+      {
+        key: 'title*0*',
+        value: "utf-8''this%20is%20j"
+      },
+      {
+        key: 'title*1*',
+        value: 'ust%20a%20title%20'
+      },
+      {
+        key: 'title*2*',
+        value: '%C3%B5%C3%A4%C3%B6'
+      },
+      {
+        key: 'title*3*',
+        value: '%C3%BC'
+      }
+    ]).to.deep.equal(continuationEncode('title', 'this is just a title õäöü', 20))
   })
 
   it('should encode and decode', function () {
-    const input = 'Lorěm ipsum doloř siť amet, háš peřpetua compřéhenšam at, ei nám modó soleát éxpétěndá! Boňorum vocibůs dignisšim pro ad, ea sensibus efficiendi intellegam ius. Ad nam aperiam delicata voluptaria, vix nobis luptatum ea, ců úsú graeco viďiššě ňusqúam. '
-    const headerLine = 'content-disposition: attachment; ' + continuationEncode('filename', input, 50).map(function (item) {
-      return item.key + '="' + item.value + '"'
-    }).join('; ')
+    const input =
+      'Lorěm ipsum doloř siť amet, háš peřpetua compřéhenšam at, ei nám modó soleát éxpétěndá! Boňorum vocibůs dignisšim pro ad, ea sensibus efficiendi intellegam ius. Ad nam aperiam delicata voluptaria, vix nobis luptatum ea, ců úsú graeco viďiššě ňusqúam. '
+    const headerLine =
+      'content-disposition: attachment; ' +
+      continuationEncode('filename', input, 50)
+        .map(function (item) {
+          return item.key + '="' + item.value + '"'
+        })
+        .join('; ')
     const parsedHeader = parseHeaderValue(headerLine)
     expect(input).to.equal(mimeWordsDecode(parsedHeader.params.filename))
   })
 
   it('should not cause URIError when encoding multi-byte unicode chars', function () {
-    expect([{
-      key: 'title*0*',
-      value: 'utf-8\'\'%F0%9F%98%8A'
-    }]).to.deep.equal(continuationEncode('title', '😊', 500))
+    expect([
+      {
+        key: 'title*0*',
+        value: "utf-8''%F0%9F%98%8A"
+      }
+    ]).to.deep.equal(continuationEncode('title', '😊', 500))
   })
 })
 
 describe('#foldLines', function () {
   it('should Fold long header line', function () {
-    const inputStr = 'Subject: Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas jušla kušla tušla musla',
-      outputStr = 'Subject: Testin command line kirja =?UTF-8?Q?=C3=B5kva?= kakva\r\n' +
-                    ' =?UTF-8?Q?m=C3=B5ni_t=C3=B5nis_k=C3=B5llas_p=C3=B5llas_t=C3=B5?=\r\n' +
-                    ' =?UTF-8?Q?llas_r=C3=B5llas_ju=C5=A1la_ku=C5=A1la_tu=C5=A1la?= musla',
+    const inputStr =
+        'Subject: Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas jušla kušla tušla musla',
+      outputStr =
+        'Subject: Testin command line kirja =?UTF-8?Q?=C3=B5kva?= kakva\r\n' +
+        ' =?UTF-8?Q?m=C3=B5ni_t=C3=B5nis_k=C3=B5llas_p=C3=B5llas_t=C3=B5?=\r\n' +
+        ' =?UTF-8?Q?llas_r=C3=B5llas_ju=C5=A1la_ku=C5=A1la_tu=C5=A1la?= musla',
       encodedHeaderLine = mimeWordsEncode(inputStr, 'Q')
 
     expect(outputStr).to.equal(foldLines(encodedHeaderLine))
   })
 
   it('should Fold flowed text', function () {
-    const inputStr = 'Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas jušla kušla tušla musla Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas jušla kušla tušla musla',
-      outputStr = 'Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas \r\n' +
-                    'jušla kušla tušla musla Testin command line kirja õkva kakva mõni tõnis \r\n' +
-                    'kõllas põllas tõllas rõllas jušla kušla tušla musla'
+    const inputStr =
+        'Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas jušla kušla tušla musla Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas jušla kušla tušla musla',
+      outputStr =
+        'Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas \r\n' +
+        'jušla kušla tušla musla Testin command line kirja õkva kakva mõni tõnis \r\n' +
+        'kõllas põllas tõllas rõllas jušla kušla tušla musla'
 
     expect(outputStr).to.equal(foldLines(inputStr, 76, true))
   })
 
   it('should fold one long line', function () {
-    const inputStr = 'Subject: =?UTF-8?Q?=CB=86=C2=B8=C3=81=C3=8C=C3=93=C4=B1=C3=8F=CB=87=C3=81=C3=9B^=C2=B8\\=C3=81=C4=B1=CB=86=C3=8C=C3=81=C3=9B=C3=98^\\=CB=9C=C3=9B=CB=9D=E2=84=A2=CB=87=C4=B1=C3=93=C2=B8^\\=CB=9C=EF=AC=81^\\=C2=B7\\=CB=9C=C3=98^=C2=A3=CB=9C#=EF=AC=81^\\=C2=A3=EF=AC=81^\\=C2=A3=EF=AC=81^\\?=',
-      outputStr = 'Subject:\r\n =?UTF-8?Q?=CB=86=C2=B8=C3=81=C3=8C=C3=93=C4=B1=C3=8F=CB=87=C3=81=C3=9B^=C2=B8\\=C3=81=C4=B1=CB=86=C3=8C=C3=81=C3=9B=C3=98^\\=CB=9C=C3=9B=CB=9D=E2=84=A2=CB=87=C4=B1=C3=93=C2=B8^\\=CB=9C=EF=AC=81^\\=C2=B7\\=CB=9C=C3=98^=C2=A3=CB=9C#=EF=AC=81^\\=C2=A3=EF=AC=81^\\=C2=A3=EF=AC=81^\\?='
+    const inputStr =
+        'Subject: =?UTF-8?Q?=CB=86=C2=B8=C3=81=C3=8C=C3=93=C4=B1=C3=8F=CB=87=C3=81=C3=9B^=C2=B8\\=C3=81=C4=B1=CB=86=C3=8C=C3=81=C3=9B=C3=98^\\=CB=9C=C3=9B=CB=9D=E2=84=A2=CB=87=C4=B1=C3=93=C2=B8^\\=CB=9C=EF=AC=81^\\=C2=B7\\=CB=9C=C3=98^=C2=A3=CB=9C#=EF=AC=81^\\=C2=A3=EF=AC=81^\\=C2=A3=EF=AC=81^\\?=',
+      outputStr =
+        'Subject:\r\n =?UTF-8?Q?=CB=86=C2=B8=C3=81=C3=8C=C3=93=C4=B1=C3=8F=CB=87=C3=81=C3=9B^=C2=B8\\=C3=81=C4=B1=CB=86=C3=8C=C3=81=C3=9B=C3=98^\\=CB=9C=C3=9B=CB=9D=E2=84=A2=CB=87=C4=B1=C3=93=C2=B8^\\=CB=9C=EF=AC=81^\\=C2=B7\\=CB=9C=C3=98^=C2=A3=CB=9C#=EF=AC=81^\\=C2=A3=EF=AC=81^\\=C2=A3=EF=AC=81^\\?='
 
     expect(outputStr).to.equal(foldLines(inputStr))
   })
@@ -417,7 +493,8 @@ describe('#headerLineEncode', function () {
   it('should encode and fold header line', function () {
     const key = 'Subject',
       value = 'Testin command line kirja õkva kakva mõni tõnis kõllas põllas tõllas rõllas jušla kušla tušla musla',
-      outputStr = 'Subject: Testin command line kirja =?UTF-8?Q?=C3=B5kva?= kakva\r\n' +
+      outputStr =
+        'Subject: Testin command line kirja =?UTF-8?Q?=C3=B5kva?= kakva\r\n' +
         ' =?UTF-8?Q?m=C3=B5ni_t=C3=B5nis_k=C3=B5llas_p=C3=B5llas_t=C3=B5?=\r\n' +
         ' =?UTF-8?Q?llas_r=C3=B5llas_ju=C5=A1la_ku=C5=A1la_tu=C5=A1la?= musla',
       encodedHeaderLine = headerLineEncode(key, value)
@@ -430,15 +507,20 @@ describe('#headerLinesDecode', function () {
   it('should decode headers', function () {
     const headersObj = {
         subject: 'Tere =?UTF-8?Q?J=C3=B5geva?=',
-        'x-app': ['My =?UTF-8?Q?=C5=A1=C5=A1=C5=A1=C5=A1?= app line 1', 'My =?UTF-8?Q?=C5=A1=C5=A1=C5=A1=C5=A1?= app line 2'],
-        'long-line': 'tere =?UTF-8?Q?=C3=B5klva?= karu =?UTF-8?Q?m=C3=B5kva_=C5=A1apaka=C5=A1?= tutikas suur maja, =?UTF-8?Q?k=C3=B5rge?= hoone, segane jutt'
+        'x-app': [
+          'My =?UTF-8?Q?=C5=A1=C5=A1=C5=A1=C5=A1?= app line 1',
+          'My =?UTF-8?Q?=C5=A1=C5=A1=C5=A1=C5=A1?= app line 2'
+        ],
+        'long-line':
+          'tere =?UTF-8?Q?=C3=B5klva?= karu =?UTF-8?Q?m=C3=B5kva_=C5=A1apaka=C5=A1?= tutikas suur maja, =?UTF-8?Q?k=C3=B5rge?= hoone, segane jutt'
       },
-      headersStr = 'Subject: Tere =?UTF-8?Q?J=C3=B5geva?=\r\n' +
-                    'X-APP: My =?UTF-8?Q?=C5=A1=C5=A1=C5=A1=C5=A1?= app line 1\r\n' +
-                    'X-APP: My =?UTF-8?Q?=C5=A1=C5=A1=C5=A1=C5=A1?= app line 2\r\n' +
-                    'Long-Line: tere =?UTF-8?Q?=C3=B5klva?= karu\r\n' +
-                    ' =?UTF-8?Q?m=C3=B5kva_=C5=A1apaka=C5=A1?= tutikas suur maja,\r\n' +
-                    ' =?UTF-8?Q?k=C3=B5rge?= hoone, segane jutt'
+      headersStr =
+        'Subject: Tere =?UTF-8?Q?J=C3=B5geva?=\r\n' +
+        'X-APP: My =?UTF-8?Q?=C5=A1=C5=A1=C5=A1=C5=A1?= app line 1\r\n' +
+        'X-APP: My =?UTF-8?Q?=C5=A1=C5=A1=C5=A1=C5=A1?= app line 2\r\n' +
+        'Long-Line: tere =?UTF-8?Q?=C3=B5klva?= karu\r\n' +
+        ' =?UTF-8?Q?m=C3=B5kva_=C5=A1apaka=C5=A1?= tutikas suur maja,\r\n' +
+        ' =?UTF-8?Q?k=C3=B5rge?= hoone, segane jutt'
 
     expect(headersObj).to.deep.equal(headerLinesDecode(headersStr))
   })
@@ -482,19 +564,20 @@ describe('#parseHeaderValue', function () {
   })
 
   it('should handle multi line values', function () {
-    const str = 'text/plain; single_encoded*="UTF-8\'\'%C3%95%C3%84%C3%96%C3%9C";\n' +
-                    ' multi_encoded*0*=UTF-8\'\'%C3%96%C3%9C;\n' +
-                    ' multi_encoded*1*=%C3%95%C3%84;\n' +
-                    ' no_charset*0=OA;\n' +
-                    ' no_charset*1=OU;\n' +
-                    ' invalid*=utf-8\'\' _?\'=%ab',
+    const str =
+        'text/plain; single_encoded*="UTF-8\'\'%C3%95%C3%84%C3%96%C3%9C";\n' +
+        " multi_encoded*0*=UTF-8''%C3%96%C3%9C;\n" +
+        ' multi_encoded*1*=%C3%95%C3%84;\n' +
+        ' no_charset*0=OA;\n' +
+        ' no_charset*1=OU;\n' +
+        " invalid*=utf-8'' _?'=%ab",
       obj = {
         value: 'text/plain',
         params: {
           single_encoded: '=?UTF-8?Q?=C3=95=C3=84=C3=96=C3=9C?=',
           multi_encoded: '=?UTF-8?Q?=C3=96=C3=9C=C3=95=C3=84?=',
           no_charset: 'OAOU',
-          invalid: '=?utf-8?Q?_=5f=3f\'=3d=ab?='
+          invalid: "=?utf-8?Q?_=5f=3f'=3d=ab?="
         }
       }
 
