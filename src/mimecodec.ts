@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/space-before-function-paren, @typescript-eslint/strict-boolean-expressions, @typescript-eslint/member-delimiter-style */
 import { encode as encodeBase64, decode as decodeBase64, OUTPUT_TYPED_ARRAY } from 'emailjs-base64'
 import { encode, decode, convert, arr2str } from './charset'
 import { pipe } from 'ramda'
@@ -17,7 +18,7 @@ const MAX_B64_MIME_WORD_BYTE_LENGTH = 39
  * @param {String} [fromCharset='UTF-8'] Source encoding
  * @return {String} Mime encoded string
  */
-export function mimeEncode(data = '', fromCharset = 'UTF-8') {
+export function mimeEncode(data: string | Uint8Array = '', fromCharset = 'UTF-8'): string {
   const buffer = convert(data, fromCharset)
   return buffer.reduce(
     (aggregate, ord, index) =>
@@ -31,7 +32,7 @@ export function mimeEncode(data = '', fromCharset = 'UTF-8') {
     ''
   )
 
-  function _checkRanges(nr) {
+  function _checkRanges(nr: number): boolean {
     const ranges = [
       // https://tools.ietf.org/html/rfc2045#section-6.7
       [0x09], // <TAB>
@@ -55,8 +56,8 @@ export function mimeEncode(data = '', fromCharset = 'UTF-8') {
  * @param {String} [fromCharset='UTF-8'] Source encoding
  * @return {String} Decoded unicode string
  */
-export function mimeDecode(str = '', fromCharset = 'UTF-8') {
-  const encodedBytesCount = (str.match(/=[\da-fA-F]{2}/g) || []).length
+export function mimeDecode(str = '', fromCharset = 'UTF-8'): string {
+  const encodedBytesCount = (str.match(/=[\da-fA-F]{2}/g) ?? []).length
   const buffer = new Uint8Array(str.length - encodedBytesCount * 2)
 
   for (let i = 0, len = str.length, bufferPos = 0; i < len; i++) {
@@ -81,7 +82,7 @@ export function mimeDecode(str = '', fromCharset = 'UTF-8') {
  * @param {String} Initial charset, e.g. 'binary'. Defaults to 'UTF-8'
  * @return {String} Base64 encoded string
  */
-export function base64Encode(data, fromCharset = 'UTF-8') {
+export function base64Encode(data: string | Uint8Array, fromCharset = 'UTF-8'): string {
   const buf = typeof data !== 'string' && fromCharset === 'binary' ? data : convert(data, fromCharset)
   const b64 = encodeBase64(buf)
   return _addBase64SoftLinebreaks(b64)
@@ -94,7 +95,7 @@ export function base64Encode(data, fromCharset = 'UTF-8') {
  * @param {String} [fromCharset='UTF-8'] Original charset of the base64 encoded string
  * @return {String} Decoded unicode string
  */
-export function base64Decode(str, fromCharset) {
+export function base64Decode(str: string, fromCharset?: string): string {
   const buf = decodeBase64(str, OUTPUT_TYPED_ARRAY)
   return fromCharset === 'binary' ? arr2str(buf) : decode(buf, fromCharset)
 }
@@ -108,7 +109,7 @@ export function base64Decode(str, fromCharset) {
  * @param {String} [fromCharset='UTF-8'] Original charset of the string
  * @return {String} Mime encoded string
  */
-export function quotedPrintableEncode(data = '', fromCharset = 'UTF-8') {
+export function quotedPrintableEncode(data: string | Uint8Array = '', fromCharset = 'UTF-8'): string {
   const mimeEncodedStr = mimeEncode(data, fromCharset)
     .replace(/\r?\n|\r/g, '\r\n') // fix line breaks, ensure <CR><LF>
     .replace(/[\t ]+$/gm, (spaces) => spaces.replace(/ /g, '=20').replace(/\t/g, '=09')) // replace spaces in the end of lines
@@ -124,7 +125,7 @@ export function quotedPrintableEncode(data = '', fromCharset = 'UTF-8') {
  * @param {String} [fromCharset='UTF-8'] Original charset of the string
  * @return {String} Mime decoded string
  */
-export function quotedPrintableDecode(str = '', fromCharset = 'UTF-8') {
+export function quotedPrintableDecode(str = '', fromCharset = 'UTF-8'): string {
   const rawString = str
     .replace(/[\t ]+$/gm, '') // remove invalid whitespace from the end of lines
     .replace(/=(?:\r?\n|$)/g, '') // remove soft line breaks
@@ -141,7 +142,7 @@ export function quotedPrintableDecode(str = '', fromCharset = 'UTF-8') {
  * @param {String} [fromCharset='UTF-8'] Source sharacter set
  * @return {String} Single or several mime words joined together
  */
-export function mimeWordEncode(data, mimeWordEncoding = 'Q', fromCharset = 'UTF-8') {
+export function mimeWordEncode(data: string | Uint8Array, mimeWordEncoding = 'Q', fromCharset = 'UTF-8'): string {
   let parts = []
   const str = typeof data === 'string' ? data : decode(data, fromCharset)
 
@@ -182,8 +183,8 @@ export function mimeWordEncode(data, mimeWordEncoding = 'Q', fromCharset = 'UTF-
  * Q-Encodes remaining forbidden header chars
  *   https://tools.ietf.org/html/rfc2047#section-5
  */
-const qEncodeForbiddenHeaderChars = function (str) {
-  const qEncode = (chr) =>
+const qEncodeForbiddenHeaderChars = function (str: string): string {
+  const qEncode = (chr: string): string =>
     chr === ' ' ? '_' : '=' + (chr.charCodeAt(0) < 0x10 ? '0' : '') + chr.charCodeAt(0).toString(16).toUpperCase()
   return str.replace(/[^a-z0-9!*+\-/=]/gi, qEncode)
 }
@@ -196,7 +197,7 @@ const qEncodeForbiddenHeaderChars = function (str) {
  * @param {String} [fromCharset='UTF-8'] Source sharacter set
  * @return {String} String with possible mime words
  */
-export function mimeWordsEncode(data = '', mimeWordEncoding = 'Q', fromCharset = 'UTF-8') {
+export function mimeWordsEncode(data: string | Uint8Array = '', mimeWordEncoding = 'Q', fromCharset = 'UTF-8'): string {
   const regex =
     /([^\s\u0080-\uFFFF]*[\u0080-\uFFFF]+[^\s\u0080-\uFFFF]*(?:\s+[^\s\u0080-\uFFFF]*[\u0080-\uFFFF]+[^\s\u0080-\uFFFF]*\s*)?)+(?=\s|$)/g
   return decode(convert(data, fromCharset)).replace(regex, (match) =>
@@ -210,7 +211,7 @@ export function mimeWordsEncode(data = '', mimeWordEncoding = 'Q', fromCharset =
  * @param {String} str Mime word encoded string
  * @return {String} Decoded unicode string
  */
-export function mimeWordDecode(str = '') {
+export function mimeWordDecode(str = ''): string {
   const match = str.match(/^=\?([\w_\-*]+)\?([QqBb])\?([^?]*)\?=$/i)
   if (!match) return str
 
@@ -236,10 +237,10 @@ export function mimeWordDecode(str = '') {
  * @param {String} str String including some mime words that will be encoded
  * @return {String} Decoded unicode string
  */
-export function mimeWordsDecode(str = '') {
+export function mimeWordsDecode(str = ''): string {
   str = str.toString().replace(/(=\?[^?]+\?[QqBb]\?[^?]+\?=)\s+(?==\?[^?]+\?[QqBb]\?[^?]*\?=)/g, '$1')
   // join bytes of multi-byte UTF-8
-  let prevEncoding
+  let prevEncoding: string
   str = str.replace(/(\?=)?=\?[uU][tT][fF]-8\?([QqBb])\?/g, (match, endOfPrevWord, encoding) => {
     const result = endOfPrevWord && encoding === prevEncoding ? '' : match
     prevEncoding = encoding
@@ -258,7 +259,7 @@ export function mimeWordsDecode(str = '') {
  * @param {Boolean} afterSpace If true, leave a space in th end of a line
  * @return {String} String with folded lines
  */
-export function foldLines(str = '', afterSpace) {
+export function foldLines(str = '', afterSpace?: boolean): string {
   let pos = 0
   const len = str.length
   let result = ''
@@ -303,7 +304,7 @@ export function foldLines(str = '', afterSpace) {
  * @param {String} [fromCharset='UTF-8'] Character set of the value
  * @return {String} encoded and folded header line
  */
-export function headerLineEncode(key, value, fromCharset) {
+export function headerLineEncode(key: string, value: string | Uint8Array, fromCharset: string): string {
   const encodedValue = mimeWordsEncode(value, 'Q', fromCharset)
   return foldLines(key + ': ' + encodedValue)
 }
@@ -315,7 +316,7 @@ export function headerLineEncode(key, value, fromCharset) {
  * @param {String} headerLine Single header line, might include linebreaks as well if folded
  * @return {Object} And object of {key, value}
  */
-export function headerLineDecode(headerLine = '') {
+export function headerLineDecode(headerLine = ''): { key: string; value: string } {
   const line = headerLine
     .toString()
     .replace(/(?:\r?\n|\r)[ \t]*/g, ' ')
@@ -323,8 +324,8 @@ export function headerLineDecode(headerLine = '') {
   const match = line.match(/^\s*([^:]+):(.*)$/)
 
   return {
-    key: ((match && match[1]) || '').trim(),
-    value: ((match && match[2]) || '').trim()
+    key: (match?.[1] ?? '').trim(),
+    value: (match?.[2] ?? '').trim()
   }
 }
 
@@ -335,9 +336,9 @@ export function headerLineDecode(headerLine = '') {
  * @param {String} headers Headers string
  * @return {Object} An object of headers, where header keys are object keys. NB! Several values with the same key make up an Array
  */
-export function headerLinesDecode(headers) {
+export function headerLinesDecode(headers: string): Record<string, string | string[]> {
   const lines = headers.split(/\r?\n|\r/)
-  const headersObj = {}
+  const headersObj: Record<string, string | string[]> = {}
 
   for (let i = lines.length - 1; i >= 0; i--) {
     if (i && lines[i].match(/^\s/)) {
@@ -376,7 +377,7 @@ export function headerLinesDecode(headers) {
  * @param {String} str Header value
  * @return {Object} Header value as a parsed structure
  */
-export function parseHeaderValue(str) {
+export function parseHeaderValue(str: string): Record<string, unknown> {
   const response = {
     value: false,
     params: {}
@@ -512,7 +513,12 @@ export function parseHeaderValue(str) {
  * @param {String} [fromCharset='UTF-8'] Source sharacter set
  * @return {Array} A list of encoded keys and headers
  */
-export function continuationEncode(key, data, maxLength, fromCharset) {
+export function continuationEncode(
+  key: string | Uint8Array,
+  data: string,
+  maxLength: number,
+  fromCharset: string
+): Array<Record<string, unknown>> {
   const list = []
   let encodedStr = typeof data === 'string' ? data : decode(data, fromCharset)
   let line
@@ -585,7 +591,7 @@ export function continuationEncode(key, data, maxLength, fromCharset) {
  * @param {Number} maxlen Maximum length of characters for one part (minimum 12)
  * @return {Array} Split string
  */
-function _splitMimeEncodedString(str, maxlen = 12) {
+function _splitMimeEncodedString(str: string, maxlen = 12): string[] {
   const minWordLength = 12 // require at least 12 symbols to fit possible 4 octet UTF-8 sequences
   const maxWordLength = Math.max(maxlen, minWordLength)
   const lines = []
@@ -622,7 +628,7 @@ function _splitMimeEncodedString(str, maxlen = 12) {
   return lines
 }
 
-function _addBase64SoftLinebreaks(base64EncodedStr = '') {
+function _addBase64SoftLinebreaks(base64EncodedStr = ''): string {
   return base64EncodedStr
     .trim()
     .replace(new RegExp('.{' + MAX_LINE_LENGTH + '}', 'g'), '$&\r\n')
@@ -635,7 +641,7 @@ function _addBase64SoftLinebreaks(base64EncodedStr = '') {
  * @param {String} qpEncodedStr String in Quoted-Printable encoding
  * @return {String} String with forced line breaks
  */
-function _addQPSoftLinebreaks(qpEncodedStr = '') {
+function _addQPSoftLinebreaks(qpEncodedStr = ''): string {
   let pos = 0
   const len = qpEncodedStr.length
   const lineMargin = Math.floor(MAX_LINE_LENGTH / 3)
