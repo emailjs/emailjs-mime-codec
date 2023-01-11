@@ -37,7 +37,9 @@ export function decode(buf: string | Uint8Array, fromCharset = 'utf-8'): string 
   for (const { charset, fatal } of charsets) {
     try {
       return new TextDecoder(charset, { fatal }).decode(buf)
-    } catch (e) {}
+    } catch (e) {
+      // ignore
+    }
   }
 
   return arr2str(buf) // all else fails, treat it as binary

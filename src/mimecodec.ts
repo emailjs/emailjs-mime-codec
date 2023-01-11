@@ -555,6 +555,8 @@ export function continuationEncode(
     // process text with unicode or special chars
     const uriEncoded = encodeURIComponent("utf-8''" + encodedStr)
     let i = 0
+
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       let len = maxLength
       // must not split hex encoded byte between lines
