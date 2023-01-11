@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/space-before-function-paren, @typescript-eslint/strict-boolean-expressions, @typescript-eslint/member-delimiter-style */
 import { TextDecoder, TextEncoder } from 'text-encoding'
 
 /**
@@ -8,7 +9,7 @@ import { TextDecoder, TextEncoder } from 'text-encoding'
  */
 export const encode = (str: string): Uint8Array => new TextEncoder('UTF-8').encode(str)
 
-export const arr2str = (arr: Uint8Array): string => {
+export const arr2str = (arr: string | Uint8Array): string => {
   const CHUNK_SZ = 0x8000
   const strs = []
 
@@ -26,7 +27,7 @@ export const arr2str = (arr: Uint8Array): string => {
  * @param {String} Binary data is decoded into string using this charset
  * @return {String} Decoded string
  */
-export function decode(buf: Uint8Array, fromCharset = 'utf-8'): string {
+export function decode(buf: string | Uint8Array, fromCharset = 'utf-8'): string {
   const charsets = [
     { charset: normalizeCharset(fromCharset), fatal: false },
     { charset: 'utf-8', fatal: true },

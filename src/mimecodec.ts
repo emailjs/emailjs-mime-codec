@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/space-before-function-paren, @typescript-eslint/strict-boolean-expressions, @typescript-eslint/member-delimiter-style */
 import { encode as encodeBase64, decode as decodeBase64, OUTPUT_TYPED_ARRAY } from 'emailjs-base64'
 import { encode, decode, convert, arr2str } from './charset'
-import { pipe } from 'ramda'
 
 // Lines can't be longer than 76 + <CR><LF> = 78 bytes
 // http://tools.ietf.org/html/rfc2045#section-6.7
@@ -148,7 +147,7 @@ export function mimeWordEncode(data: string | Uint8Array, mimeWordEncoding = 'Q'
 
   if (mimeWordEncoding === 'Q') {
     const str = typeof data === 'string' ? data : decode(data, fromCharset)
-    const encodedStr = pipe(mimeEncode, qEncodeForbiddenHeaderChars)(str)
+    const encodedStr = qEncodeForbiddenHeaderChars(mimeEncode(str))
     parts =
       encodedStr.length < MAX_MIME_WORD_LENGTH
         ? [encodedStr]
@@ -378,7 +377,10 @@ export function headerLinesDecode(headers: string): Record<string, string | stri
  * @return {Object} Header value as a parsed structure
  */
 export function parseHeaderValue(str: string): Record<string, unknown> {
-  const response = {
+  const response: {
+    value: string | boolean
+    params: Record<string, Uint8Array>
+  } = {
     value: false,
     params: {}
   }
@@ -410,7 +412,7 @@ export function parseHeaderValue(str: string): Record<string, unknown> {
       } else if (!quote && chr === '"') {
         quote = chr
       } else if (!quote && chr === ';') {
-        if (key === false) {
+        if (!key) {
           response.value = value.trim()
         } else {
           response.params[key] = value.trim()
@@ -425,7 +427,7 @@ export function parseHeaderValue(str: string): Record<string, unknown> {
   }
 
   if (type === 'value') {
-    if (key === false) {
+    if (!key) {
       response.value = value.trim()
     } else {
       response.params[key] = value.trim()
@@ -482,7 +484,7 @@ export function parseHeaderValue(str: string): Record<string, unknown> {
           response.params[key].charset +
           '?Q?' +
           value
-            .replace(/[=?_\s]/g, function (s) {
+            .replace(/[=?_\s]/g, function (s: string): string {
               // fix invalidly encoded chars
               const c = s.charCodeAt(0).toString(16)
               return s === ' ' ? '_' : '%' + (c.length < 2 ? '0' : '') + c
@@ -537,7 +539,7 @@ export function continuationEncode(
       ]
     }
 
-    encodedStr = encodedStr.replace(new RegExp('.{' + maxLength + '}', 'g'), function (str) {
+    encodedStr = encodedStr.replace(new RegExp('.{' + maxLength.toString() + '}', 'g'), function (str) {
       list.push({
         line: str
       })
@@ -578,7 +580,7 @@ export function continuationEncode(
       // encoded lines: {name}*{part}*
       // unencoded lines: {name}*{part}
       // if any line needs to be encoded then the first line (part==0) is always encoded
-      key: key + '*' + i + (item.encoded ? '*' : ''),
+      key: key.toString() + '*' + i.toString() + (item.encoded ? '*' : ''),
       value: /[\s";=]/.test(item.line) ? '"' + item.line + '"' : item.line
     }
   })
@@ -631,7 +633,7 @@ function _splitMimeEncodedString(str: string, maxlen = 12): string[] {
 function _addBase64SoftLinebreaks(base64EncodedStr = ''): string {
   return base64EncodedStr
     .trim()
-    .replace(new RegExp('.{' + MAX_LINE_LENGTH + '}', 'g'), '$&\r\n')
+    .replace(new RegExp('.{' + MAX_LINE_LENGTH.toString() + '}', 'g'), '$&\r\n')
     .trim()
 }
 
