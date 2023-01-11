@@ -1,5 +1,3 @@
-/* eslint-disable one-var, no-tabs */
-
 import { expect } from 'chai'
 import {
   mimeEncode,

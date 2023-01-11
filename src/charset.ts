@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/space-before-function-paren, @typescript-eslint/strict-boolean-expressions, @typescript-eslint/member-delimiter-style */
 import { TextDecoder, TextEncoder } from 'text-encoding'
 
 /**

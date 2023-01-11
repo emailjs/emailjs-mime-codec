@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/space-before-function-paren, @typescript-eslint/strict-boolean-expressions, @typescript-eslint/member-delimiter-style */
 import { encode as encodeBase64, decode as decodeBase64, OUTPUT_TYPED_ARRAY } from 'emailjs-base64'
 import { encode, decode, convert, arr2str } from './charset'
 
@@ -303,7 +302,7 @@ export function foldLines(str = '', afterSpace?: boolean): string {
  * @param {String} [fromCharset='UTF-8'] Character set of the value
  * @return {String} encoded and folded header line
  */
-export function headerLineEncode(key: string, value: string | Uint8Array, fromCharset: string): string {
+export function headerLineEncode(key: string, value: string | Uint8Array, fromCharset?: string): string {
   const encodedValue = mimeWordsEncode(value, 'Q', fromCharset)
   return foldLines(key + ': ' + encodedValue)
 }
@@ -376,20 +375,16 @@ export function headerLinesDecode(headers: string): Record<string, string | stri
  * @param {String} str Header value
  * @return {Object} Header value as a parsed structure
  */
-export function parseHeaderValue(str: string): Record<string, unknown> {
-  const response: {
-    value: string | boolean
-    params: Record<string, Uint8Array>
-  } = {
-    value: false,
-    params: {}
-  }
-  let key = false
+export function parseHeaderValue(str: string): { value: string; params: Record<string, string> } {
+  let key: string | false = false
   let value = ''
   let type = 'value'
-  let quote = false
+  let quote: string | false = false
   let escaped = false
-  let chr
+  let chr: string
+
+  let responseValue: string | boolean = false
+  const initialParams: Record<string, string> = {}
 
   for (let i = 0, len = str.length; i < len; i++) {
     chr = str.charAt(i)
@@ -413,9 +408,9 @@ export function parseHeaderValue(str: string): Record<string, unknown> {
         quote = chr
       } else if (!quote && chr === ';') {
         if (!key) {
-          response.value = value.trim()
+          responseValue = value.trim()
         } else {
-          response.params[key] = value.trim()
+          initialParams[key] = value.trim()
         }
         type = 'key'
         value = ''
@@ -428,60 +423,71 @@ export function parseHeaderValue(str: string): Record<string, unknown> {
 
   if (type === 'value') {
     if (!key) {
-      response.value = value.trim()
+      responseValue = value.trim()
     } else {
-      response.params[key] = value.trim()
+      initialParams[key] = value.trim()
     }
   } else if (value.trim()) {
-    response.params[value.trim().toLowerCase()] = ''
+    initialParams[value.trim().toLowerCase()] = ''
   }
 
   // handle parameter value continuations
   // https://tools.ietf.org/html/rfc2231#section-3
 
+  const processedParams: Record<
+    string,
+    {
+      charset: string | false
+      values: string[]
+    }
+  > = {}
+
   // preprocess values
-  Object.keys(response.params).forEach(function (key) {
+  Object.keys(initialParams).forEach(function (key) {
     let actualKey, nr, match, value
+
     if ((match = key.match(/(\*(\d+)|\*(\d+)\*|\*)$/))) {
       actualKey = key.substr(0, match.index)
       nr = Number(match[2] || match[3]) || 0
 
-      if (!response.params[actualKey] || typeof response.params[actualKey] !== 'object') {
-        response.params[actualKey] = {
+      if (!processedParams[actualKey]) {
+        processedParams[actualKey] = {
           charset: false,
           values: []
         }
       }
 
-      value = response.params[key]
+      value = initialParams[key]
 
       if (nr === 0 && match[0].substr(-1) === '*' && (match = value.match(/^([^']*)'[^']*'(.*)$/))) {
-        response.params[actualKey].charset = match[1] || 'iso-8859-1'
+        processedParams[actualKey].charset = match[1] || 'iso-8859-1'
         value = match[2]
       }
 
-      response.params[actualKey].values[nr] = value
+      processedParams[actualKey].values[nr] = value
 
       // remove the old reference
-      delete response.params[key]
+      delete initialParams[key]
     }
   })
 
+  const concatenatedParams: Record<string, string> = {}
+
   // concatenate split rfc2231 strings and convert encoded strings to mime encoded words
-  Object.keys(response.params).forEach(function (key) {
+  Object.keys(processedParams).forEach(function (key) {
     let value
-    if (response.params[key] && Array.isArray(response.params[key].values)) {
-      value = response.params[key].values
+    if (processedParams[key] && Array.isArray(processedParams[key].values)) {
+      value = processedParams[key].values
         .map(function (val) {
           return val || ''
         })
         .join('')
 
-      if (response.params[key].charset) {
+      if (processedParams[key].charset) {
         // convert "%AB" to "=?charset?Q?=AB?="
-        response.params[key] =
+        concatenatedParams[key] =
           '=?' +
-          response.params[key].charset +
+          processedParams[key].charset +
           '?Q?' +
           value
             .replace(/[=?_\s]/g, function (s: string): string {
@@ -492,12 +498,17 @@ export function parseHeaderValue(str: string): Record<string, unknown> {
             .replace(/%/g, '=') +
           '?=' // change from urlencoding to percent encoding
       } else {
-        response.params[key] = value
+        concatenatedParams[key] = value
       }
     }
   })
 
-  return response
+  const responseParams = { ...initialParams, ...concatenatedParams }
+
+  return {
+    value: responseValue,
+    params: responseParams
+  }
 }
 
 /**
@@ -519,7 +530,7 @@ export function continuationEncode(
   key: string | Uint8Array,
   data: string,
   maxLength: number,
-  fromCharset: string
+  fromCharset?: string
 ): Array<Record<string, unknown>> {
   const list = []
   let encodedStr = typeof data === 'string' ? data : decode(data, fromCharset)

@@ -6,18 +6,11 @@
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceRoot}",
-      "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+      "program": "${workspaceRoot}/node_modules/ts-mocha/bin/ts-mocha",
       "stopOnEntry": false,
-      "args": [
-        "./src/*-unit.js",
-        "--require", "babel-register", "testutils.js",
-        "--reporter", "spec",
-        "--no-timeouts"
-      ],
-      "runtimeArgs": [
-          "--nolazy"
-      ],
+      "args": ["./src/${fileBasename}", "--require", "@babel/register", "--reporter", "spec", "--no-timeouts"],
+      "runtimeArgs": ["--nolazy"],
       "sourceMaps": true
-  }
+    }
   ]
 }
