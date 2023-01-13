@@ -6,14 +6,14 @@ import { TextDecoder, TextEncoder } from 'text-encoding'
  * @param {String} str String to be encoded
  * @return {Uint8Array} UTF-8 encoded typed array
  */
-export const encode = str => new TextEncoder('UTF-8').encode(str)
+export const encode = (str: string): Uint8Array => new TextEncoder('UTF-8').encode(str)
 
-export const arr2str = arr => {
+export const arr2str = (arr: Uint8Array): string => {
   const CHUNK_SZ = 0x8000
   const strs = []
 
   for (let i = 0; i < arr.length; i += CHUNK_SZ) {
-    strs.push(String.fromCharCode.apply(null, arr.subarray(i, i + CHUNK_SZ)))
+    strs.push(String.fromCharCode.apply(null, Array.from(arr.subarray(i, i + CHUNK_SZ))))
   }
 
   return strs.join('')
@@ -26,7 +26,7 @@ export const arr2str = arr => {
  * @param {String} Binary data is decoded into string using this charset
  * @return {String} Decoded string
  */
-export function decode (buf, fromCharset = 'utf-8') {
+export function decode(buf: Uint8Array, fromCharset = 'utf-8'): string {
   const charsets = [
     { charset: normalizeCharset(fromCharset), fatal: false },
     { charset: 'utf-8', fatal: true },
@@ -34,7 +34,11 @@ export function decode (buf, fromCharset = 'utf-8') {
   ]
 
   for (const { charset, fatal } of charsets) {
-    try { return new TextDecoder(charset, { fatal }).decode(buf) } catch (e) { }
+    try {
+      return new TextDecoder(charset, { fatal }).decode(buf)
+    } catch (e) {
+      // ignore
+    }
   }
 
   return arr2str(buf) // all else fails, treat it as binary
@@ -47,9 +51,10 @@ export function decode (buf, fromCharset = 'utf-8') {
  * @param {String} Source encoding for the string (optional for data of type String)
  * @return {Uint8Array} UTF-8 encoded typed array
  */
-export const convert = (data, fromCharset) => typeof data === 'string' ? encode(data) : encode(decode(data, fromCharset))
+export const convert = (data: string | Uint8Array, fromCharset: string): Uint8Array =>
+  typeof data === 'string' ? encode(data) : encode(decode(data, fromCharset))
 
-function normalizeCharset (charset = 'utf-8') {
+function normalizeCharset(charset = 'utf-8'): string {
   let match
 
   if ((match = charset.match(/^utf[-_]?(\d+)$/i))) {
