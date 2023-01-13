@@ -336,7 +336,7 @@ export function headerLineDecode(headerLine = ''): { key: string; value: string 
  */
 export function headerLinesDecode(headers: string): Record<string, string | string[]> {
   const lines = headers.split(/\r?\n|\r/)
-  const headersObj: Record<string, string | string[]> = {}
+  const headersObjArr: Record<string, string[]> = {}
 
   for (let i = lines.length - 1; i >= 0; i--) {
     if (i && lines[i].match(/^\s/)) {
@@ -350,12 +350,17 @@ export function headerLinesDecode(headers: string): Record<string, string | stri
     const key = header.key.toLowerCase()
     const value = header.value
 
-    if (!headersObj[key]) {
-      headersObj[key] = value
+    if (!headersObjArr[key]) {
+      headersObjArr[key] = [value]
     } else {
-      headersObj[key] = [].concat(headersObj[key], value)
+      headersObjArr[key].push(value)
     }
   }
+
+  // convert single value arrays to single values
+  const headersObj = Object.fromEntries(
+    Object.entries(headersObjArr).map(([key, value]) => (value.length === 1 ? [key, value[0]] : [key, value]))
+  )
 
   return headersObj
 }
@@ -375,7 +380,7 @@ export function headerLinesDecode(headers: string): Record<string, string | stri
  * @param {String} str Header value
  * @return {Object} Header value as a parsed structure
  */
-export function parseHeaderValue(str: string): { value: string; params: Record<string, string> } {
+export function parseHeaderValue(str: string): { value: string | false; params: Record<string, string> } {
   let key: string | false = false
   let value = ''
   let type = 'value'
@@ -666,7 +671,7 @@ function _addQPSoftLinebreaks(qpEncodedStr = ''): string {
   // insert soft linebreaks where needed
   while (pos < len) {
     line = qpEncodedStr.substr(pos, MAX_LINE_LENGTH)
-    if ((match = line.match(/\r\n/))) {
+    if ((match = line.match(/\r\n/)) && match.index !== undefined) {
       line = line.substr(0, match.index + match[0].length)
       result += line
       pos += line.length
