@@ -474,7 +474,7 @@ describe('#foldLines', function () {
         'jušla kušla tušla musla Testin command line kirja õkva kakva mõni tõnis \r\n' +
         'kõllas põllas tõllas rõllas jušla kušla tušla musla'
 
-    expect(outputStr).to.equal(foldLines(inputStr, 76, true))
+    expect(outputStr).to.equal(foldLines(inputStr, true))
   })
 
   it('should fold one long line', function () {
